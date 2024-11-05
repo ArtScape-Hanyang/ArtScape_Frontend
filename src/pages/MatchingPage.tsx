@@ -22,7 +22,7 @@ const MatchingPage = () => {
           {" "}
           <div className="text-container">
             <div className="text-container--next">
-              <h5>시작하기qjxms</h5>
+              <h5>시작하기</h5>
             </div>
             <div className="container--icon">
               <img src={nextbtn} className="next-icon" alt="다음으로" />
