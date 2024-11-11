@@ -14,26 +14,28 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
     "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
-  background-color: #a5a5a5;
+  background-color: #ffffff;
   /* 배경의 가로와 세로를 고정 */
   overflow: hidden;
 }
 
 .main-container {
+  width: 25.125rem;
+  height: 54.625rem;
   box-sizing: border-box;
-  background-color: #b7fffe;
+  background-color: #ffffff;
 }
 
 Header {
-  padding-top: 4.0625rem;
+  width: 25.125rem;
   display: flex;
   height: 3.25rem;
-  justify-content: space-between;
-  align-items: center;
+  justify-content: center; /* 수평 가운데 정렬 */
+  align-items: center; /* 세로 가운데 정렬 */
   flex-shrink: 0;
   align-self: stretch;
-  background-color: rgb(255, 205, 205);
 }
+
 nav {
   display: flex; /* nav에 flex 속성을 추가 */
   gap: 6rem; /* 이미지 간의 간격을 추가, 필요에 따라 조정 */
@@ -68,7 +70,7 @@ h1 {
   font-weight: 700;
   line-height: 1.75rem; /* 100% */
   letter-spacing: -0.04375rem;
-  margin: 0px;
+  margin: 0.5rem;
 }
 
 h2 {
@@ -84,6 +86,18 @@ h2 {
   letter-spacing: -0.0375rem;
   margin: 0px 0px 5px 0px;
 }
+h3 {
+  color: var(--primary-White, #fafbfb);
+  font-feature-settings: "liga" off, "clig" off;
+  /* Header/H3 */
+  font-family: Pretendard;
+  font-size: 1.25rem;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 1.25rem; /* 100% */
+  letter-spacing: -0.03125rem;
+}
+
 h5 {
   color: var(--Gray-Scale-G400, #656572);
 
@@ -95,6 +109,17 @@ h5 {
   line-height: 1rem; /* 100% */
   letter-spacing: -0.025rem;
 }
+/* Body/R500 텍스트 스타일 */
+.body-r500 {
+  color: var(--Gray-Scale-Black, #17171b); /* 텍스트 색상 */
+  font-family: Pretendard, sans-serif; /* 폰트 패밀리 */
+  font-size: 0.875rem; /* 폰트 크기 */
+  font-style: normal; /* 글꼴 스타일 */
+  font-weight: 500; /* 글꼴 두께: 500 */
+  line-height: 0.875rem; /* 줄 높이 */
+  letter-spacing: -0.02188rem; /* 글자 간격 */
+}
+
 .start-button {
   display: flex;
   align-items: center;
@@ -117,10 +142,10 @@ h5 {
   cursor: pointer;
 }
 .text-container {
-  display: flex;
   align-items: center;
   gap: 8px; /* 텍스트와 아이콘 사이의 여백 */
   position: relative;
+  text-align: left; /* 텍스트를 왼쪽 정렬 */
 }
 
 .text-container--title {
@@ -159,4 +184,92 @@ h5 {
 .next-icon {
   width: 0.5rem;
   height: 1rem;
+}
+
+/*로그인 폼*/
+
+.login-container {
+  display: flex;
+  align-items: center;
+  position: relative;
+  background-color: #fff;
+  top: 14rem;
+  justify-content: center;
+  width: 100%;
+}
+.login-container label {
+  justify-content: left;
+  display: block;
+  margin-bottom: 0.5rem;
+  text-align: left;
+}
+
+.login-container input {
+  width: 22.125rem;
+  margin-bottom: 1.25rem;
+  border: 1px solid #ddd;
+  height: 3rem;
+  padding: var(---spacing-medium, 0.75rem) var(---spacing-large, 1rem);
+  align-items: center;
+  gap: var(---spacing-small, 0.5rem);
+  align-self: stretch;
+  border-radius: 0.5rem;
+  background: var(--Gray-Scale-G100, #e7e7ee);
+}
+
+.login-container button {
+  width: 100%;
+  display: flex;
+  padding: 1rem;
+  justify-content: center;
+  align-items: center;
+  border-radius: 1rem;
+  background: var(--primary-G500, #52c1bf);
+  height: 4rem;
+}
+
+.login-container button:hover {
+  background-color: #aeaeae;
+}
+
+.logo-black {
+  width: 9.08631rem;
+  height: var(--Radius-2, 3.5rem);
+  flex-shrink: 0;
+  display: flex;
+  height: 3.25rem;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+  align-self: stretch;
+}
+/* 체크박스 컨테이너 스타일 */
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  height: 1rem;
+  margin-bottom: 2.38rem;
+}
+
+.checkbox-container input {
+  margin: 0px;
+  border-radius: 0.25rem;
+  width: 1rem;
+  height: 1rem;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-radius: var(---cornerRadius-medium, 0.25rem);
+  border: var(---spacing-0, 1px) solid var(--Gray-Scale-Black, #17171b);
+}
+
+.checkbox-container label {
+  margin: 0px;
+  cursor: pointer; /* 클릭 가능하게 커서 변경 */
+}
+.signup-link-text {
+  color: var(--primary-G500, #52c1bf);
+  text-align: right;
+  margin-left: 13.69rem;
 }
