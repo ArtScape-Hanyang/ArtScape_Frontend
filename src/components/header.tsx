@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Link } from "react-router-dom";
-import logo from "../asset/logo.svg";
+import logoblack from "../asset/logo-black.svg";
 import ringingbell from "../asset/ringing-bell.svg";
 const Header: React.FC = () => {
   return (
@@ -15,10 +15,10 @@ const Header: React.FC = () => {
 
         <Link to="/matching">
           {" "}
-          <img src={logo} className="logo" alt="로고" />
+          <img src={logoblack} className="logo-black" alt="로고블랙" />
         </Link>
 
-        <Link to="/about">
+        <Link to="/login">
           {" "}
           <img src={ringingbell} className="ringing-bell" alt="알람" />
         </Link>
