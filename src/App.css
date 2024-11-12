@@ -6,7 +6,7 @@
   text-align: center;
   overflow: hidden; /* root 크기 벗어나는 내용 숨김 */
   position: relative; /* 배경 이미지 위치 조정 가능 */
-  background-color: #ff7e7e;
+  background-color: #ffe6e6;
 }
 
 body {
@@ -14,7 +14,7 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
     "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
-  background-color: #ffffff;
+  background-color: #ededed;
   /* 배경의 가로와 세로를 고정 */
   overflow: hidden;
 }
@@ -59,6 +59,15 @@ button {
   align-items: center;
 }
 
+.logo-black {
+  display: flex;
+  width: 9.08631rem;
+  height: var(--Radius-2, 3.5rem);
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 0.625rem;
+}
 h1 {
   color: var(--Gray-Scale-Black, #17171b);
   font-feature-settings: "liga" off, "clig" off;
@@ -118,6 +127,15 @@ h5 {
   font-weight: 500; /* 글꼴 두께: 500 */
   line-height: 0.875rem; /* 줄 높이 */
   letter-spacing: -0.02188rem; /* 글자 간격 */
+}
+/* Body/S400 */
+.body-s400 {
+  font-family: Pretendard;
+  font-size: 0.75rem;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 148%; /* 1.11rem */
+  letter-spacing: -0.01875rem;
 }
 
 .start-button {
@@ -232,22 +250,11 @@ h5 {
   background-color: #aeaeae;
 }
 
-.logo-black {
-  width: 9.08631rem;
-  height: var(--Radius-2, 3.5rem);
-  flex-shrink: 0;
-  display: flex;
-  height: 3.25rem;
-  justify-content: space-between;
-  align-items: center;
-  flex-shrink: 0;
-  align-self: stretch;
-}
 /* 체크박스 컨테이너 스타일 */
 .checkbox-container {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.5rem;
   height: 1rem;
   margin-bottom: 2.38rem;
 }
@@ -271,5 +278,39 @@ h5 {
 .signup-link-text {
   color: var(--primary-G500, #52c1bf);
   text-align: right;
-  margin-left: 13.69rem;
+  margin-left: 15rem;
+}
+.line-wrapper {
+  margin-top: 15rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%; /* 부모 컨테이너 너비에 맞추기 */
+}
+.line-container {
+  content: "";
+  margin-top: 3.13rem;
+  display: block;
+  width: 7.03125rem;
+  height: 0.0625rem;
+  background-color: #cdcdd6; /* 원하는 색상 */
+}
+.line-wrapper p {
+  position: relative;
+  top: 1.5rem;
+  color: var(--Gray-Scale-G400, #656572);
+  text-align: center;
+  justify-content: center;
+}
+.social-login-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 2.38rem;
+  gap: 2.5rem;
+}
+.social-login-btn img {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
