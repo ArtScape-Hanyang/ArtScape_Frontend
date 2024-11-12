@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import backbtn from "../asset/backbtn.svg";
 import aimatchstar from "../asset/aimatchstar.png";
 import nextbtn from "../asset/nextbtn.svg";
@@ -7,9 +8,11 @@ const MatchingPage = () => {
     <div className="main-container">
       <div className="container">
         <div className="container--icon">
-          <button className="back-button">
-            <img src={backbtn} className="back-icon" alt="뒤로가기" />
-          </button>
+          <Link to="/">
+            <button className="back-button">
+              <img src={backbtn} className="back-icon" alt="뒤로가기" />
+            </button>
+          </Link>
         </div>
 
         <div className="text-container">
