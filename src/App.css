@@ -3,7 +3,6 @@
   height: 54.625rem;
   margin: 0 auto;
   padding: 3.125rem 1.5rem 2.5rem 1.5rem;
-  text-align: center;
   overflow: hidden; /* root 크기 벗어나는 내용 숨김 */
   position: relative; /* 배경 이미지 위치 조정 가능 */
   background-color: #ff7e7e;
@@ -60,7 +59,6 @@ button {
 }
 
 h1 {
-  color: var(--Gray-Scale-Black, #17171b);
   font-feature-settings: "liga" off, "clig" off;
 
   /* Header/H1 */
@@ -87,7 +85,6 @@ h2 {
   margin: 0px 0px 5px 0px;
 }
 h3 {
-  color: var(--primary-White, #fafbfb);
   font-feature-settings: "liga" off, "clig" off;
   /* Header/H3 */
   font-family: Pretendard;
