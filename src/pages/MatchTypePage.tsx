@@ -4,10 +4,20 @@ import nextbtn from '../asset/nextbtn.svg'
 import styled from 'styled-components'
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import GlobalStyle from "../styles/GlobalStyle";
+
 
 interface Level {
     width: number,
 }
+
+const MainContainer = styled.div`
+  width: 25.125rem;
+  height: 54.625rem;
+  background-color: #ffffff;
+  box-sizing: border-box;
+  padding: 0 1.5rem;
+`;
 
 const H1 = styled.h1`
     font-family: Pretendard;
@@ -22,7 +32,7 @@ const H1 = styled.h1`
 const Title = styled.div`
     display: flex;
     flex-direction: column;
-    margin-top: 11rem;
+    padding-top: 11rem;
     gap: 0.3rem;
 `;
 
@@ -70,7 +80,7 @@ const ProgressBar = styled.div`
     margin-top: 55%;
 `;
 
-const Progress = styled.div`
+const Progress = styled.div<{ width: number }>`
     width: ${(props:Level) => props.width}%;
     height: 0.5rem;
     background-color: #52C1BF;
@@ -108,10 +118,14 @@ const Detail = styled.div`
     left: 0;
 `;
 
+
+
 function MatchTypePage() {
     const maxItem = 12
     const avaliableItem = 2
     const [isDetailVisible, setIsDetailVisible] = useState(false);
+    const [selectedPrice, setSelectedPrice] = useState<string | null>(null);
+    const [selectedSize, setSelectedSize] = useState<string | null>(null);
     const navigate = useNavigate();
 
     const handleTypeDetailClick = () => {
@@ -123,47 +137,63 @@ function MatchTypePage() {
     }
 
     return (
-        <div>
-            <Title>
-                <H1>작가님은</H1>
-                <H1>어떤 전시를 열고 싶으신가요?</H1>
-            </Title>
-            <OpenCost>
-                <h3>전시 입장 가격</h3>
-                <ButtonGap>
-                    <SelectButton label="무료 전시"></SelectButton>
-                    <SelectButton label="유료 전시"></SelectButton>
-                </ButtonGap>
-            </OpenCost>
-            <div>
-                <Range>
-                    <h3>전시 규모</h3>
-                    <TypeDetail src={typeDetail} onClick={handleTypeDetailClick}/>
-                    {isDetailVisible && (
-                        <Detail>소형 전시:<br></br> 20평 내외의 소규모 공간에서 진행하는 지인 관람객 
-                            위주의 전시<br></br> (전시 개최 이력이 없어 경험을 쌓고 싶은 아티스트에게 
-                            추천해요!)<br></br><br></br> 중형 전시:<br></br> 4-50평 내외의 공간에서 진행하는 외부 관람객 
-                            위주의 전시<br></br> (제대로 된 전시 이력을 쌓고 싶은 아티스트에게 추천해요!)<br></br><br></br>
-                            대형 전시:<br></br> 70평 이상의 공간에서 진행하는 외부 관람객 위주의 대규모 전시<br></br> 
-                            (유료 상업 전시를 희망하는 아티스트에게 추천해요!)</Detail>
-                    )}
-                </Range>
-                <ButtonGap>
-                    <SelectButton label="소형 전시"></SelectButton>
-                    <SelectButton label="중형 전시"></SelectButton>
-                    <SelectButton label="대형 전시"></SelectButton>
-                </ButtonGap>
-            </div>
-            <div>
-                <ProgressBar>
-                    <Progress width = {(avaliableItem*100/maxItem)}></Progress>
-                </ProgressBar>
-                <NextBtn onClick={handleNextClick}>
-                    <button>다음으로</button>
-                    <img src={nextbtn} />
-                </NextBtn>
-            </div>
-        </div>
+        <MainContainer>
+            <GlobalStyle />
+                <Title>
+                    <H1>작가님은</H1>
+                    <H1>어떤 전시를 열고 싶으신가요?</H1>
+                </Title>
+                <OpenCost>
+                    <h3>전시 입장 가격</h3>
+                    <ButtonGap>
+                        <SelectButton 
+                        label="무료 전시"
+                        onClick={() => setSelectedPrice("무료 전시")}
+                        isSelected={selectedPrice === "무료 전시"}></SelectButton>
+                        <SelectButton 
+                        label="유료 전시"
+                        onClick={() => setSelectedPrice("유료 전시")}
+                        isSelected={selectedPrice === "유료 전시"}></SelectButton>
+                        </ButtonGap>
+                </OpenCost>
+                <div>
+                    <Range>
+                        <h3>전시 규모</h3>
+                        <TypeDetail src={typeDetail} onClick={handleTypeDetailClick}/>
+                        {isDetailVisible && (
+                            <Detail>소형 전시:<br></br> 20평 내외의 소규모 공간에서 진행하는 지인 관람객 
+                                    위주의 전시<br></br> (전시 개최 이력이 없어 경험을 쌓고 싶은 아티스트에게 
+                                    추천해요!)<br></br><br></br> 중형 전시:<br></br> 4-50평 내외의 공간에서 진행하는 외부 관람객 
+                                    위주의 전시<br></br> (제대로 된 전시 이력을 쌓고 싶은 아티스트에게 추천해요!)<br></br><br></br>
+                                    대형 전시:<br></br> 70평 이상의 공간에서 진행하는 외부 관람객 위주의 대규모 전시<br></br> 
+                                    (유료 상업 전시를 희망하는 아티스트에게 추천해요!)</Detail>
+                        )}
+                    </Range>
+                    <ButtonGap>
+                        <SelectButton 
+                        label="소형 전시"
+                        onClick={() => setSelectedSize("소형 전시")}
+                        isSelected = {selectedSize === "소형 전시"}></SelectButton>
+                        <SelectButton 
+                        label="중형 전시"
+                        onClick={() => setSelectedSize("중형 전시")}
+                        isSelected = {selectedSize === "중형 전시"}></SelectButton>
+                        <SelectButton 
+                        label="대형 전시"
+                        onClick={() => setSelectedSize("대형 전시")}
+                        isSelected = {selectedSize === "대형 전시"}></SelectButton>
+                    </ButtonGap>
+                </div>
+                <div>
+                    <ProgressBar>
+                        <Progress width = {(avaliableItem*100/maxItem)}></Progress>
+                    </ProgressBar>
+                    <NextBtn onClick={handleNextClick}>
+                        <button>다음으로</button>
+                        <img src={nextbtn} />
+                    </NextBtn>
+                </div>
+        </MainContainer>
     )
 }
 
