@@ -1,6 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import Home from "./routes/home";
+
 import Matching from "./pages/Matching";
 import MatchTypePage from "./pages/MatchTypePage";
 import LoginPage from "./pages/LoginPage";
@@ -11,16 +11,14 @@ import MatchLocation from "./pages/MatchLocation";
 const App: React.FC = () => {
   return (
     <Router>
-      <div className="container">
-        <Routes>
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/signup" element={<SignupPage />} />
-          <Route path="/matching" element={<Matching />} />
-          <Route path="/matching/type" element={<MatchTypePage />} />
-          <Route path="/matching/personnel" element={<MatchPersonnel />} />
-          <Route path="/matching/location" element={<MatchLocation />} />
-        </Routes>
-      </div>
+      <Routes>
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/signup" element={<SignupPage />} />
+        <Route path="/matching" element={<Matching />} />
+        <Route path="/matching/type" element={<MatchTypePage />} />
+        <Route path="/matching/personnel" element={<MatchPersonnel />} />
+        <Route path="/matching/location" element={<MatchLocation />} />
+      </Routes>
     </Router>
   );
 };

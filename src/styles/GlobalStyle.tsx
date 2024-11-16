@@ -16,6 +16,7 @@ const GlobalStyle = createGlobalStyle`
       sans-serif;
     background-color: #ededed;
     overflow-y: auto;
+    
   }
 /* 기본 버튼 스타일 초기화 */
 button {

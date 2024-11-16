@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import styled from "styled-components";
 import logoblack from "../asset/logo-black.svg";
 import ringingbell from "../asset/ringing-bell.svg";
+import GlobalStyle from "../styles/GlobalStyle";
 
 const HeaderContainer = styled.header`
   width: 25.125rem;
@@ -43,8 +44,9 @@ const RingingBell = styled.img`
 const Header: React.FC = () => {
   return (
     <HeaderContainer>
+      <GlobalStyle />
       <Nav>
-        <Link to="/login">
+        <Link to="/matching/type">
           <RingingBell src={ringingbell} alt="알람" />
         </Link>
         <Link to="/signup">
