@@ -15,7 +15,8 @@ const GlobalStyle = createGlobalStyle`
       "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
       sans-serif;
     background-color: #ededed;
-    overflow: hidden;
+    overflow-y: auto;
+    
   }
 /* 기본 버튼 스타일 초기화 */
 button {
