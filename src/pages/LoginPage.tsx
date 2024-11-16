@@ -92,7 +92,7 @@ const BodyS400 = styled.p`
 `;
 
 // 로그인 페이지 컴포넌트
-const LoginPage = ({ children }) => {
+const LoginPage = () => {
   return (
     <MainContainer>
       <GlobalStyle />
