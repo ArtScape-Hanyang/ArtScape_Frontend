@@ -85,6 +85,7 @@ const Progress = styled.div<{ width: number }>`
     height: 0.5rem;
     background-color: #52C1BF;
     border-radius: 20px;
+    transition: width 0.3s ease;
 `;
 
 const NextBtn = styled.div`
@@ -133,7 +134,7 @@ function MatchTypePage() {
     }
 
     const handleNextClick = () => {
-        navigate('/matching/personnel')
+        navigate('/matching/personnel');
     }
 
     return (
