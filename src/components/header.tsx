@@ -15,7 +15,6 @@ const HeaderContainer = styled.header`
   align-items: center;
   flex-shrink: 0;
   align-self: stretch;
-  background-color: #ffffff;
 `;
 
 const Nav = styled.nav`
