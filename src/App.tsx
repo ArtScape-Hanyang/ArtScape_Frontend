@@ -7,6 +7,8 @@ import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import MatchPersonnel from "./pages/MatchPersonnel";
 import MatchLocation from "./pages/MatchLocation";
+import ProfilePage from "./pages/ProfilePage";
+import MapPage from "./pages/MapPage";
 
 const App: React.FC = () => {
   return (
@@ -18,6 +20,8 @@ const App: React.FC = () => {
         <Route path="/matching/type" element={<MatchTypePage />} />
         <Route path="/matching/personnel" element={<MatchPersonnel />} />
         <Route path="/matching/location" element={<MatchLocation />} />
+        <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/map" element={<MapPage />} />
       </Routes>
     </Router>
   );
