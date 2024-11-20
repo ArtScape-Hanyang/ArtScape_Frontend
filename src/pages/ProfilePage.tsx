@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import styled from "styled-components";
 import GlobalStyle from "../styles/GlobalStyle";
 import Header from "../components/header";
