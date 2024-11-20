@@ -4,10 +4,12 @@ import { createGlobalStyle } from "styled-components";
 const GlobalStyle = createGlobalStyle`
   :root {
     width: 25.125rem;
-  height: 54.625rem;
-  margin: 0 auto;
-  padding: 0rem 1.5rem 0rem 1.5rem;
-  background-color: #ffe6e6;
+    height: 54.625rem;
+    margin: 0 auto;
+    padding: 0rem 1.5rem 0rem 1.5rem;
+    background-color: #ffe6e6;
+    
+    
   }
   body {
     margin: 0;
@@ -16,7 +18,15 @@ const GlobalStyle = createGlobalStyle`
       sans-serif;
     background-color: #989898;
     overflow-y: auto;
+   
+    font-family: 'Pretendard-Regular', sans-serif;
     
+  }
+  @font-face {
+    font-family: 'Pretendard-Regular';
+    src: url('https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
+    font-weight: 400;
+    font-style: normal;
   }
 /* 기본 버튼 스타일 초기화 */
 button {
