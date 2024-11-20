@@ -7,6 +7,10 @@ import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import MatchPersonnel from "./pages/MatchPersonnel";
 import MatchLocation from "./pages/MatchLocation";
+import MatchForm from "./pages/MatchForm";
+import MatchMystyle from "./pages/MatchMystyle";
+import MatchWtstyle from "./pages/MatchWtstyle";
+import MatchMchlist from "./pages/MatchMchlist";
 import ProfilePage from "./pages/ProfilePage";
 import MapPage from "./pages/MapPage";
 
@@ -20,6 +24,10 @@ const App: React.FC = () => {
         <Route path="/matching/type" element={<MatchTypePage />} />
         <Route path="/matching/personnel" element={<MatchPersonnel />} />
         <Route path="/matching/location" element={<MatchLocation />} />
+        <Route path="/matching/form" element={<MatchForm />} />
+        <Route path="/matching/mystyle" element={<MatchMystyle />} />
+        <Route path="/matching/wtstyle" element={<MatchWtstyle />} />
+        <Route path="/matching/mchlist" element={<MatchMchlist />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/map" element={<MapPage />} />
       </Routes>
