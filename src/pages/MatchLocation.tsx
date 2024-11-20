@@ -52,7 +52,7 @@ const H3 = styled.h3`
     font-weight: 500;
     line-height: 1rem; /* 100% */
     letter-spacing: -0.025rem;
-    margin: 0;
+    margin-top: 1%;
 `;
 
 const LocContainer = styled.div`
@@ -95,7 +95,7 @@ const ProgressBar = styled.div`
     height: 0.5rem;
     background-color: #E7E7EE;
     border-radius: 20px;
-    margin-top: 40%;
+    margin-top: 35%;
 `;
 
 const Progress = styled.div<{ width: number }>`

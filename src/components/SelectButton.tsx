@@ -3,11 +3,12 @@ import styled from "styled-components";
 interface SelectButtonProps {
     label: string;
     isSelected: boolean;
+    width?: string;
     onClick: () => void;
 }
 
-const Button = styled.button<{ isSelected: boolean }>`
-  width: 5.63rem;
+const Button = styled.button<{ isSelected: boolean; width?: string }>`
+  width: ${({width}) => width || "5.63rem"};
   height: 2rem;
   background-color: white;
   border-radius: 8px;
@@ -22,9 +23,9 @@ const Button = styled.button<{ isSelected: boolean }>`
 
 
 
-function SelectButton({label, isSelected, onClick}: SelectButtonProps) {
+function SelectButton({label, isSelected, width, onClick}: SelectButtonProps) {
   return (
-    <Button isSelected={isSelected} onClick={onClick}>{label}</Button>
+    <Button isSelected={isSelected} width={width} onClick={onClick}>{label}</Button>
   );
 };
 
