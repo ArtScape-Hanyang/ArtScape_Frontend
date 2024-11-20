@@ -36,7 +36,7 @@ const TextContainerTitle = styled.div`
   position: absolute;
   top: 7rem;
   align-self: stretch;
-  margin-left: 1rem;
+  margin-left: 1.5rem;
 `;
 // 라인 래퍼 스타일
 const LineWrapper = styled.div`
