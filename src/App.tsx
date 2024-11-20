@@ -13,6 +13,7 @@ import MatchWtstyle from "./pages/MatchWtstyle";
 import MatchMchlist from "./pages/MatchMchlist";
 import ProfilePage from "./pages/ProfilePage";
 import MapPage from "./pages/MapPage";
+import PlanMain from "./pages/PlanMain";
 
 const App: React.FC = () => {
   return (
@@ -30,6 +31,7 @@ const App: React.FC = () => {
         <Route path="/matching/mchlist" element={<MatchMchlist />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/map" element={<MapPage />} />
+        <Route path="/multi_pln" element={<PlanMain />} />
       </Routes>
     </Router>
   );

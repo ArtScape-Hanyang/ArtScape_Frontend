@@ -91,7 +91,7 @@ function MatchMchlist() {
     }
 
     const handleNextClick = () => {
-        navigate('/multi_pln/default');
+        navigate('/multi_pln');
     }
     return (
         <MainContainer>
