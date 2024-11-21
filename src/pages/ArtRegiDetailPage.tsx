@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import styled from "styled-components";
 import Header from "../components/header";
 import GlobalStyle from "../styles/GlobalStyle";
@@ -64,7 +64,7 @@ const ImagePreviewWrapper = styled.label`
   border-radius: 0.5rem;
   background: var(--Gray-Scale-G100, #e7e7ee);
   position: relative;
-  overflow: hidden;
+
   cursor: pointer;
 `;
 

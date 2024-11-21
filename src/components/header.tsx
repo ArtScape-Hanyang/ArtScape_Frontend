@@ -23,6 +23,7 @@ const Nav = styled.nav`
   margin: 0 auto;
   justify-content: center;
   align-items: center;
+  margin-top: 0.75rem;
 `;
 
 const Logo = styled.img`

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 
@@ -77,6 +77,22 @@ const SignupLink = styled(Link)`
   color: var(--primary-G500, #52c1bf);
   text-align: right;
   margin-left: 12rem;
+
+  text-align: left;
+  font-family: Pretendard, sans-serif;
+  font-size: 0.875rem;
+  font-weight: 500;
+`;
+
+const AutoLogin = styled.p`
+  justify-content: left;
+  display: block;
+
+  text-align: left;
+  font-family: Pretendard, sans-serif;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--Gray-Scale-Black, #17171b);
 `;
 
 const LoginForm = () => {
@@ -115,10 +131,10 @@ const LoginForm = () => {
             checked={rememberMe}
             onChange={handleCheckboxChange}
           />
-          <Label htmlFor="rememberMe">자동 로그인</Label>
-          <Label>
-            <SignupLink to="/signup">회원가입</SignupLink>
-          </Label>
+
+          <AutoLogin>자동 로그인</AutoLogin>
+
+          <SignupLink to="/signup">회원가입</SignupLink>
         </CheckboxContainer>
 
         <Button type="submit">로그인</Button>
