@@ -18,32 +18,35 @@ import ArtRegiPage from "./pages/ArtRegiPage";
 import ArtRegiDetailPage from "./pages/ArtRegiDetailPage";
 import ArtRegiBugetPage from "./pages/ArtRegiBugetPage";
 import EditBudgetPage from "./pages/EditBudgetPage";
+import { BudgetProvider } from "./layout/BudgetContext";
 
 const App: React.FC = () => {
   return (
     <Router>
-      <Routes>
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/signup" element={<SignupPage />} />
-        <Route path="/matching" element={<Matching />} />
-        <Route path="/matching/type" element={<MatchTypePage />} />
-        <Route path="/matching/personnel" element={<MatchPersonnel />} />
-        <Route path="/matching/location" element={<MatchLocation />} />
-        <Route path="/matching/form" element={<MatchForm />} />
-        <Route path="/matching/mystyle" element={<MatchMystyle />} />
-        <Route path="/matching/wtstyle" element={<MatchWtstyle />} />
-        <Route path="/matching/mchlist" element={<MatchMchlist />} />
-        <Route path="/profile" element={<ProfilePage />} />
-        <Route path="/map" element={<MapPage />} />
-        <Route path="/multi_pln" element={<PlanMain />} />
-        <Route path="/multi_pln/entry/defalut" element={<ArtRegiPage />} />
-        <Route
-          path="/multi_pln/entryedit/defalut"
-          element={<ArtRegiDetailPage />}
-        />
-        <Route path="/multi_pln/budget" element={<ArtRegiBugetPage />} />
-        <Route path="/multi_pln/budget/edit" element={<EditBudgetPage />} />
-      </Routes>
+      <BudgetProvider>
+        <Routes>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<SignupPage />} />
+          <Route path="/matching" element={<Matching />} />
+          <Route path="/matching/type" element={<MatchTypePage />} />
+          <Route path="/matching/personnel" element={<MatchPersonnel />} />
+          <Route path="/matching/location" element={<MatchLocation />} />
+          <Route path="/matching/form" element={<MatchForm />} />
+          <Route path="/matching/mystyle" element={<MatchMystyle />} />
+          <Route path="/matching/wtstyle" element={<MatchWtstyle />} />
+          <Route path="/matching/mchlist" element={<MatchMchlist />} />
+          <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/map" element={<MapPage />} />
+          <Route path="/multi_pln" element={<PlanMain />} />
+          <Route path="/multi_pln/entry/defalut" element={<ArtRegiPage />} />
+          <Route
+            path="/multi_pln/entryedit/defalut"
+            element={<ArtRegiDetailPage />}
+          />
+          <Route path="/multi_pln/budget" element={<ArtRegiBugetPage />} />
+          <Route path="/multi_pln/budget/edit" element={<EditBudgetPage />} />
+        </Routes>
+      </BudgetProvider>
     </Router>
   );
 };

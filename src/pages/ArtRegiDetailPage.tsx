@@ -264,7 +264,7 @@ const ArtRegiDetailPage = () => {
             onInput={handleTextareaInput}
           />
         </ArtPostText>
-        <Button type="submit">작품 이미지 등록</Button>
+        <Button type="submit">작품 등록</Button>
       </ArtPostForm>
     </MainContainer>
   );
