@@ -15,6 +15,7 @@ import ProfilePage from "./pages/ProfilePage";
 import MapPage from "./pages/MapPage";
 import PlanMain from "./pages/PlanMain";
 import PlanInfo from "./pages/PlanInfo";
+import PlanNote from "./pages/PlanNote";
 import ArtRegiPage from "./pages/ArtRegiPage";
 import ArtRegiDetailPage from "./pages/ArtRegiDetailPage";
 import ArtRegiBugetPage from "./pages/ArtRegiBugetPage";
@@ -47,6 +48,7 @@ const App: React.FC = () => {
           <Route path="/multi_pln/budget" element={<ArtRegiBugetPage />} />
           <Route path="/multi_pln/budget/edit" element={<EditBudgetPage />} />
           <Route path="/multi_pln/info" element={<PlanInfo />} />
+          <Route path="/multi_pln/note" element={<PlanNote />} />
         </Routes>
       </BudgetProvider>
     </Router>
