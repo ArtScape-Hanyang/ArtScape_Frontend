@@ -109,19 +109,18 @@ const Button = styled.button`
 const EditBudgetPage = () => {
   const { setBudgetItems } = useContext(BudgetContext);
   const [name, setName] = useState("");
-  const [cost, setCost] = useState(""); // Default to empty string
-  const navigate = useNavigate(); // Initialize navigate
-
+  const [cost, setCost] = useState(""); 
+  const navigate = useNavigate(); 
   const handleAddItem = (e) => {
-    e.preventDefault(); // Prevent default form submission
-    const costNumber = parseFloat(cost); // Convert cost to a number
+    e.preventDefault(); 
+    const costNumber = parseFloat(cost); 
 
     if (name && !isNaN(costNumber) && costNumber > 0) {
       const newItem = { id: Date.now(), name, cost: costNumber };
-      setBudgetItems((prevBudgetItems) => [...prevBudgetItems, newItem]); // Add new item to global budgetItems
-      setName(""); // Reset name input
-      setCost(""); // Reset cost input to empty string
-      navigate("/multi_pln/budget"); // Redirect to budget page after adding the item
+      setBudgetItems((prevBudgetItems) => [...prevBudgetItems, newItem]); 
+      setName("");
+      setCost(""); 
+      navigate("/multi_pln/budget");
     }
   };
 
