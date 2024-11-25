@@ -2,7 +2,6 @@ import styled from "styled-components";
 import GlobalStyle from "../styles/GlobalStyle";
 import Header from "../components/header";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 
 const MainContainer = styled.div`
   width: 25.125rem;
@@ -116,7 +115,7 @@ function PlanNote() {
         setContainers((prev) => [...prev, prev.length]);
     }
 
-    const handleResize = (e) => {
+    const handleResize = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         e.target.style.height = "auto";
         e.target.style.height = `${e.target.scrollHeight}px`;
     }
