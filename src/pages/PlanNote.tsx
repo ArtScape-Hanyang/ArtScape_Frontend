@@ -9,7 +9,7 @@ const MainContainer = styled.div`
   background-color: #ffffff;
   box-sizing: border-box;
   position: relative;
-  padding:0;
+  padding: 0;
 `;
 
 const H1 = styled.h1`
