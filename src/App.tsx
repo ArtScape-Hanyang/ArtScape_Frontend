@@ -16,6 +16,7 @@ import MapPage from "./pages/MapPage";
 import PlanMain from "./pages/PlanMain";
 import PlanInfo from "./pages/PlanInfo";
 import PlanNote from "./pages/PlanNote";
+import PlanDate from "./pages/PlanDate";
 import ArtRegiPage from "./pages/ArtRegiPage";
 import ArtRegiDetailPage from "./pages/ArtRegiDetailPage";
 import ArtRegiBugetPage from "./pages/ArtRegiBugetPage";
@@ -49,6 +50,7 @@ const App: React.FC = () => {
           <Route path="/multi_pln/budget/edit" element={<EditBudgetPage />} />
           <Route path="/multi_pln/info" element={<PlanInfo />} />
           <Route path="/multi_pln/note" element={<PlanNote />} />
+          <Route path="/multi_pln/Exhidate" element={<PlanDate />} />
         </Routes>
       </BudgetProvider>
     </Router>
