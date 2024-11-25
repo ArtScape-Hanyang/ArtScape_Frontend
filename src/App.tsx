@@ -37,7 +37,7 @@ const App: React.FC = () => {
           <Route path="/matching/wtstyle" element={<MatchWtstyle />} />
           <Route path="/matching/mchlist" element={<MatchMchlist />} />
           <Route path="/profile" element={<ProfilePage />} />
-          <Route path="/map" element={<MapPage />} />
+          <Route path="/multi_pln/map" element={<MapPage />} />
           <Route path="/multi_pln" element={<PlanMain />} />
           <Route path="/multi_pln/entry/defalut" element={<ArtRegiPage />} />
           <Route
