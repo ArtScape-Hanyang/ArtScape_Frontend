@@ -17,7 +17,7 @@ const MainContainer = styled.div`
   background-color: #ffffff;
   box-sizing: border-box;
   position: relative;
-  padding: 3.75rem 0;
+  padding:0;
 `;
 
 const TitleContainer = styled.div`
