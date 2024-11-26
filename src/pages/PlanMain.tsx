@@ -17,7 +17,7 @@ const MainContainer = styled.div`
   background-color: #ffffff;
   box-sizing: border-box;
   position: relative;
-  padding:0;
+  padding: 0;
 `;
 
 const TitleContainer = styled.div`
@@ -464,7 +464,9 @@ function PlanMain() {
   const handleNoteClick = () => {
     navigate("multi_pln/note");
   };
-
+  const handleEntryClick = () => {
+    navigate("entry/defalut");
+  };
   const handleComplete = () => {
     navigate("/main");
   };
@@ -513,7 +515,7 @@ function PlanMain() {
               <ProfileImg width="1.75rem" height="1.75rem" src={profile} />
               <Name>김다현</Name>
             </ItemArtist>
-            <SeemoreCon>
+            <SeemoreCon onClick={handleEntryClick}>
               <img src={seemore} />
               <img src={seemore} />
               <img src={seemore} />
@@ -529,7 +531,7 @@ function PlanMain() {
               <ProfileImg width="1.75rem" height="1.75rem" src={profile} />
               <Name>이재욱</Name>
             </ItemArtist>
-            <SeemoreCon>
+            <SeemoreCon onClick={handleEntryClick}>
               <img src={seemore} />
               <img src={seemore} />
               <img src={seemore} />

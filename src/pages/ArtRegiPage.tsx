@@ -3,15 +3,75 @@ import styled from "styled-components";
 import Header from "../components/header";
 import GlobalStyle from "../styles/GlobalStyle";
 import add from "../asset/add.svg";
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 
-// 스타일 정의 (생략)
+const ArtRegiPage = () => {
+  const [artworks, setArtworks] = useState<
+    {
+      id: number;
+      imagePreview: string | null;
+      artworkName: string;
+      artworkDescription: string;
+    }[]
+  >([]);
+
+  useEffect(() => {
+    // 로컬 스토리지에서 데이터 불러오기
+    const savedArtworks = JSON.parse(localStorage.getItem("artworks") || "[]");
+    setArtworks(savedArtworks);
+  }, []);
+
+  const handleDelete = (id: number) => {
+    // 해당 ID를 가진 출품작 삭제
+    const updatedArtworks = artworks.filter((artwork) => artwork.id !== id);
+    setArtworks(updatedArtworks);
+    // 로컬 스토리지에 업데이트된 데이터 저장
+    localStorage.setItem("artworks", JSON.stringify(updatedArtworks));
+  };
+
+  return (
+    <MainContainer>
+      <GlobalStyle />
+      <Header />
+      <TextContainerTitle>
+        <H2>출품작 목록</H2>
+        <BodyM500>등록된 작품을 확인해보세요!</BodyM500>
+      </TextContainerTitle>
+      {artworks.map((artwork) => (
+        <InfoContainer key={artwork.id}>
+          {artwork.imagePreview && (
+            <ImagePreviewWrapper>
+              <ImagePreview
+                src={artwork.imagePreview}
+                alt="등록된 이미지 미리보기"
+              />
+            </ImagePreviewWrapper>
+          )}
+          {artwork.artworkName && <H5>{artwork.artworkName}</H5>}
+          {artwork.artworkDescription && (
+            <BodyM500>{artwork.artworkDescription}</BodyM500>
+          )}{" "}
+          {/* 삭제 버튼 추가 */}
+          <DeleteButton onClick={() => handleDelete(artwork.id)}>
+            삭제
+          </DeleteButton>
+        </InfoContainer>
+      ))}
+      <Plusbutton to="/multi_pln/entryedit/defalut">
+        <img src={add} alt="추가버튼" />
+      </Plusbutton>
+    </MainContainer>
+  );
+};
+
+export default ArtRegiPage;
 
 const MainContainer = styled.div`
   width: 25.125rem;
-  height: 54.625rem;
+  min-height: 54.625rem;
   background-color: #ffffff;
   box-sizing: border-box;
+  padding-bottom: 1rem;
 `;
 
 const TextContainerTitle = styled.div`
@@ -40,7 +100,17 @@ const H2 = styled.h2`
   letter-spacing: -0.0375rem;
   margin: 0.5rem 0;
 `;
-
+const H5 = styled.h2`
+  color: var(--Gray-Scale-Black, #17171b);
+  /* Header/H5 */
+  font-family: Pretendard;
+  font-size: 1rem;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 1rem; /* 100% */
+  letter-spacing: -0.025rem;
+  margin: 0;
+`;
 const Plusbutton = styled(Link)`
   display: flex;
   flex-direction: column;
@@ -52,7 +122,7 @@ const Plusbutton = styled(Link)`
   border-radius: 0.375rem;
   border: 1px solid var(--Gray-Scale-G100, #e7e7ee);
   background: var(--primary-White, #fafbfb);
-  margin: 11.25rem 1.5rem 0;
+  margin: 9.25rem 1.5rem 1rem 1.5rem;
   text-decoration: none;
   cursor: pointer;
 
@@ -64,9 +134,8 @@ const Plusbutton = styled(Link)`
 `;
 const ImagePreviewWrapper = styled.label`
   display: flex;
-  width: 22.125rem;
-  height: 22.125rem;
-  margin-top: 7.25rem;
+  width: 20.125rem;
+  height: 20.125rem;
   justify-content: center;
   align-items: center;
   gap: 0.625rem;
@@ -85,42 +154,31 @@ const ImagePreview = styled.img`
   object-position: center;
   display: block;
 `;
+const InfoContainer = styled.div`
+  margin-bottom: 1rem;
+  position: relative;
+  display: flex;
+  width: 20.125rem;
+  flex-direction: column;
+  padding: 0.75rem;
+  gap: 0.75rem;
+  background: var(--primary-White, #fafbfb);
+  top: 8.25rem;
+  left: 1.5rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--Gray-Scale-G100, #e7e7ee);
+`;
+const DeleteButton = styled.button`
+  width: 100%;
+  padding: 0.5rem;
+  margin-top: 0.5rem;
+  background: var(--primary-G500, #52c1bf);
+  color: white;
+  border: none;
+  border-radius: 0.375rem;
+  cursor: pointer;
 
-const ArtRegiPage = () => {
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
-
-  // 위치에 따른 상태 전달 (Link로 전달한 state 가져오기)
-  const location = useLocation();
-  const state = location.state as { imagePreview: string | null };
-
-  useEffect(() => {
-    if (state?.imagePreview) {
-      setImagePreview(state.imagePreview); // state로 받은 imagePreview 값으로 상태 갱신
-    }
-  }, [state]);
-  return (
-    <MainContainer>
-      <GlobalStyle />
-      <Header />
-      <TextContainerTitle>
-        <H2>출품작 등록</H2>
-        <BodyM500>이번 전시에 출품할 작품을 등록해보세요!</BodyM500>
-      </TextContainerTitle>
-      {/* 이미지 미리보기 */}
-      {imagePreview && (
-        <ImagePreviewWrapper>
-          <ImagePreview src={imagePreview} alt="등록된 이미지 미리보기" />
-        </ImagePreviewWrapper>
-      )}
-      <Plusbutton
-        to={{
-          pathname: "/multi_pln/entryedit/defalut", // 이미지 등록 페이지로 이동
-        }}
-      >
-        <img src={add} alt="추가버튼" />
-      </Plusbutton>
-    </MainContainer>
-  );
-};
-
-export default ArtRegiPage;
+  &:hover {
+    background-color: #ff4d4d;
+  }
+`;
