@@ -117,7 +117,7 @@ function PlanInfo() {
 
     const handleComplete = () => {
         if (isButtonActive) {
-            navigate('/multi_pln');
+            navigate("/multi_pln", { state: {title, description}});
         }
     }
     return (
