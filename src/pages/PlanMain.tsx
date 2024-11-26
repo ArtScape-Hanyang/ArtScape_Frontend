@@ -8,7 +8,7 @@ import seemore from "../asset/seemore.svg";
 import exhibitionphoto from "../asset/exhibitionphoto.svg";
 import whitemap from "../asset/whitemap.svg";
 import complete from "../asset/complete.svg";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import Button from "../components/Button";
 
 const MainContainer = styled.div`
@@ -444,9 +444,11 @@ const BtnContainer = styled.div`
 
 function PlanMain() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { title, description } = location.state || {};
 
   const handleTitleClick = () => {
-    navigate("/multi_pln/info");
+    navigate(`/multi_pln/info`);
   };
 
   const handleDateClick = () => {
@@ -462,7 +464,7 @@ function PlanMain() {
   };
 
   const handleNoteClick = () => {
-    navigate("multi_pln/note");
+    navigate("/multi_pln/note");
   };
 
   const handleComplete = () => {
@@ -479,11 +481,16 @@ function PlanMain() {
         </Profile>
         <InputContainer>
           <TitleInput
+            value={title || ""}
             placeholder="전시 제목 입력"
             readOnly
             onClick={handleTitleClick}
           />
-          <ContentInput placeholder="전시 설명 입력..." />
+          <ContentInput
+          value={description || ""}
+          placeholder="전시 설명 입력..."
+          readOnly
+          onClick={handleTitleClick} />
         </InputContainer>
       </TitleContainer>
       <ArtistContainer>
