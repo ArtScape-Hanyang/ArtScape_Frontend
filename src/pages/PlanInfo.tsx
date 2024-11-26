@@ -116,7 +116,9 @@ function PlanInfo() {
     const isButtonActive = title.trim() !== "" && description.trim() !== "";
 
     const handleComplete = () => {
-        navigate('/multi_pln');
+        if (isButtonActive) {
+            navigate('/multi_pln');
+        }
     }
     return (
         <MainContainer>
