@@ -66,6 +66,31 @@ const List = styled.ul`
   }
 `;
 
+const loadKakaoSDK = () => {
+  const apiKey = import.meta.env.VITE_API_KEY; // 환경 변수에서 API 키 가져오기
+
+  if (!apiKey) {
+    console.error("API 키가 설정되지 않았습니다. .env 파일을 확인하세요.");
+    return;
+  }
+
+  if (document.getElementById("kakao-map-script")) {
+    console.log("Kakao Maps SDK가 이미 로드되었습니다.");
+    return;
+  }
+
+  const script = document.createElement("script");
+  script.id = "kakao-map-script"; // 중복 로드를 방지하기 위한 ID 설정
+  script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${apiKey}&libraries=services,clusterer`;
+  script.async = true;
+
+  script.onload = () => {
+    console.log("Kakao Maps SDK 로드 완료!");
+  };
+
+  document.head.appendChild(script);
+};
+
 const MapPage = () => {
   const [input, setInput] = useState("");
   const [center, setCenter] = useState({ lat: 33.5563, lng: 126.79581 });
@@ -100,6 +125,10 @@ const MapPage = () => {
       alert("검색 결과를 찾을 수 없습니다.");
     }
   };
+
+  useEffect(() => {
+    loadKakaoSDK(); // SDK 동적 로드
+  }, []);
 
   return (
     <MainContainer>
