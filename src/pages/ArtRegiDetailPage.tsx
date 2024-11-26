@@ -1,9 +1,106 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import styled from "styled-components";
 import Header from "../components/header";
 import GlobalStyle from "../styles/GlobalStyle";
 import photos from "../asset/photos.svg";
-import { useNavigate, useLocation } from "react-router-dom"; // useNavigate 추가
+import { useNavigate } from "react-router-dom"; // useNavigate 추가
+
+const ArtRegiDetailPage = () => {
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [artworkName, setArtworkName] = useState<string>("");
+  const [artworkDescription, setArtworkDescription] = useState<string>("");
+
+  const navigate = useNavigate();
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+
+  const handleTextareaInput = () => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto";
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+    }
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      setImagePreview(URL.createObjectURL(file));
+    }
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const newArtwork = {
+      id: Date.now(),
+      imagePreview,
+      artworkName,
+      artworkDescription,
+    };
+
+    // 기존 저장된 데이터를 불러오고 새로운 데이터를 추가
+    const savedArtworks = JSON.parse(localStorage.getItem("artworks") || "[]");
+    const updatedArtworks = [...savedArtworks, newArtwork];
+    localStorage.setItem("artworks", JSON.stringify(updatedArtworks));
+
+    alert("출품작이 등록되었습니다!");
+
+    // ArtRegiPage로 이동
+    navigate("/multi_pln/entry/defalut");
+  };
+
+  return (
+    <MainContainer>
+      <GlobalStyle />
+      <Header />
+      <TextContainerTitle>
+        <H2>출품작 등록</H2>
+        <BodyM500>이번 전시에 출품할 작품을 등록해보세요!</BodyM500>
+      </TextContainerTitle>
+      <ArtPostForm onSubmit={handleSubmit}>
+        <ImagePreviewWrapper htmlFor="file-input">
+          {imagePreview ? (
+            <ImagePreview src={imagePreview} alt="미리보기 이미지" />
+          ) : (
+            <PlaceholderIcon src={photos} alt="사진 아이콘" />
+          )}
+        </ImagePreviewWrapper>
+        <FileInput
+          id="file-input"
+          type="file"
+          accept="image/*"
+          onChange={handleImageChange}
+        />
+        <ArtPostText>
+          <Label htmlFor="artwork-name">
+            <H5>작품명</H5>
+          </Label>
+          <Input
+            id="artwork-name"
+            type="text"
+            placeholder="작품명을 입력하세요"
+            value={artworkName}
+            onChange={(e) => setArtworkName(e.target.value)}
+          />
+
+          <Label htmlFor="artwork-description">
+            <H5>작품소개</H5>
+          </Label>
+          <Textarea
+            id="artwork-description"
+            placeholder="작품에 대해 설명해 주세요"
+            ref={textareaRef}
+            value={artworkDescription}
+            onChange={(e) => setArtworkDescription(e.target.value)}
+            onInput={handleTextareaInput}
+          />
+        </ArtPostText>
+        <Button type="submit">작품 등록</Button>
+      </ArtPostForm>
+    </MainContainer>
+  );
+};
+
+export default ArtRegiDetailPage;
 
 // 메인 컨테이너 스타일
 const MainContainer = styled.div`
@@ -83,6 +180,9 @@ const PlaceholderIcon = styled.img`
 
 const FileInput = styled.input`
   display: none;
+  border: none;
+  outline: none;
+  cursor: pointer;
 `;
 
 const Label = styled.label`
@@ -107,6 +207,9 @@ const Input = styled.input`
   font-weight: 500;
   line-height: 120%; /* 1.2rem */
   letter-spacing: -0.025rem;
+
+  outline: none;
+  cursor: pointer;
   &::placeholder {
     color: var(--Gray-Scale-G300, #9696a6); /* 플레이스홀더 색상 변경 */
   }
@@ -128,6 +231,9 @@ const Textarea = styled.textarea`
   font-weight: 500;
   line-height: 120%; /* 1.2rem */
   letter-spacing: -0.025rem;
+
+  outline: none;
+  cursor: pointer;
   &::placeholder {
     color: var(--Gray-Scale-G300, #9696a6); /* 플레이스홀더 색상 변경 */
   }
@@ -168,106 +274,3 @@ const Button = styled.button`
     background-color: #aeaeae;
   }
 `;
-const ArtRegiDetailPage = () => {
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [artworkName, setArtworkName] = useState<string>("");
-  const [artworkDescription, setArtworkDescription] = useState<string>("");
-
-  const navigate = useNavigate(); // useNavigate 훅 사용
-  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
-
-  // Link로 전달받은 state 값을 처리
-  const location = useLocation();
-  const { imagePreview: initialImage } = location.state || {};
-
-  useEffect(() => {
-    if (initialImage) {
-      setImagePreview(initialImage); // 전달받은 이미지 미리보기 세팅
-    }
-  }, [initialImage]);
-
-  const handleTextareaInput = () => {
-    if (textareaRef.current) {
-      textareaRef.current.style.height = "auto";
-      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
-    }
-  };
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      setImagePreview(URL.createObjectURL(file));
-    }
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    // 로컬 스토리지에 데이터 저장
-    const formData = {
-      image: imagePreview,
-      name: artworkName,
-      description: artworkDescription,
-    };
-
-    localStorage.setItem("artworkData", JSON.stringify(formData)); // 로컬 스토리지에 데이터 저장
-
-    alert("출품작이 등록되었습니다!");
-
-    // 등록 후 ArtRegiPage로 이동
-    navigate("/multi_pln/entry/defalut"); // ArtRegiPage로 이동
-  };
-
-  return (
-    <MainContainer>
-      <GlobalStyle />
-      <Header />
-      <TextContainerTitle>
-        <H2>출품작 등록</H2>
-        <BodyM500>이번 전시에 출품할 작품을 등록해보세요!</BodyM500>
-      </TextContainerTitle>
-      <ArtPostForm onSubmit={handleSubmit}>
-        <ImagePreviewWrapper htmlFor="file-input">
-          {imagePreview ? (
-            <ImagePreview src={imagePreview} alt="Profile Preview" />
-          ) : (
-            <PlaceholderIcon src={photos} alt="Camera Icon" />
-          )}
-        </ImagePreviewWrapper>
-        <FileInput
-          id="file-input"
-          type="file"
-          accept="image/*"
-          onChange={handleImageChange}
-        />
-        <ArtPostText>
-          <Label htmlFor="artwork-name">
-            <H5>작품명</H5>
-          </Label>
-          <Input
-            id="artwork-name"
-            type="text"
-            placeholder="작품명을 입력하세요"
-            value={artworkName}
-            onChange={(e) => setArtworkName(e.target.value)}
-          />
-
-          <Label htmlFor="artwork-description">
-            <H5>작품소개</H5>
-          </Label>
-          <Textarea
-            id="artwork-description"
-            placeholder="작품에 대해 설명해 주세요"
-            ref={textareaRef}
-            value={artworkDescription}
-            onChange={(e) => setArtworkDescription(e.target.value)}
-            onInput={handleTextareaInput}
-          />
-        </ArtPostText>
-        <Button type="submit">작품 등록</Button>
-      </ArtPostForm>
-    </MainContainer>
-  );
-};
-
-export default ArtRegiDetailPage;

@@ -49,10 +49,10 @@ const Header: React.FC = () => {
         <Link to="/matching/type">
           <RingingBell src={ringingbell} alt="알람" />
         </Link>
-        <Link to="/signup">
+        <Link to="/login">
           <Logo src={logoblack} alt="로고블랙" />
         </Link>
-        <Link to="/login">
+        <Link to="/multi_pln">
           <RingingBell src={ringingbell} alt="알람" />
         </Link>
       </Nav>
