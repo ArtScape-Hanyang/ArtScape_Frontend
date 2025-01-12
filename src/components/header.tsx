@@ -5,12 +5,13 @@ import { Link } from "react-router-dom";
 import styled from "styled-components";
 import logoblack from "../asset/logo-black.svg";
 import ringingbell from "../asset/ringing-bell.svg";
+import chat from "../asset/chatting.svg";
 import GlobalStyle from "../styles/GlobalStyle";
 
 const HeaderContainer = styled.header`
   width: 25.125rem;
   display: flex;
-  height: 3.25rem;
+  height: 4.13rem;
   justify-content: center;
   align-items: center;
   flex-shrink: 0;
@@ -37,8 +38,14 @@ const Logo = styled.img`
 `;
 
 const RingingBell = styled.img`
-  width: 1.5rem; /* 원하는 크기로 설정 */
-  height: 1.5rem;
+  width: 1.25rem;
+  height: 1.25rem;
+  padding: 1.5rem 0rem;
+`;
+
+const Chatting = styled.img`
+  width: 1.25rem;
+  height: 1.25rem;
 `;
 
 const Header: React.FC = () => {
@@ -46,8 +53,8 @@ const Header: React.FC = () => {
     <HeaderContainer>
       <GlobalStyle />
       <Nav>
-        <Link to="/matching/type">
-          <RingingBell src={ringingbell} alt="알람" />
+        <Link to="/matching">
+          <Chatting src={chat} alt="채팅" />
         </Link>
         <Link to="/login">
           <Logo src={logoblack} alt="로고블랙" />
