@@ -3,6 +3,20 @@ import GlobalStyle from "../styles/GlobalStyle";
 import SignupForm from "../layout/SignupForm";
 import Header from "../components/header";
 
+const SignupPage = () => {
+  return (
+    <MainContainer>
+      <GlobalStyle />
+      <Header />
+      <TextContainer>
+        <TextContainerTitle>
+          <H1>회원가입</H1>
+        </TextContainerTitle>
+      </TextContainer>
+      <SignupForm />
+    </MainContainer>
+  );
+};
 // 메인 컨테이너 스타일
 const MainContainer = styled.div`
   width: 25.125rem;
@@ -34,20 +48,4 @@ const H1 = styled.h1`
   letter-spacing: -0.04375rem;
   margin: 0.5rem;
 `;
-
-const SignupPage = () => {
-  return (
-    <MainContainer>
-      <GlobalStyle />
-      <Header />
-      <TextContainer>
-        <TextContainerTitle>
-          <H1>회원가입</H1>
-        </TextContainerTitle>
-      </TextContainer>
-      <SignupForm />
-    </MainContainer>
-  );
-};
-
 export default SignupPage;

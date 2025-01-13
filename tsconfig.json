@@ -5,6 +5,9 @@
     { "path": "./tsconfig.node.json" }
   ],
   "compilerOptions": {
-    "types": ["kakao.maps.d.ts"]
+    "types": ["kakao.maps.d.ts", "firebase"], // Firebase 타입 추가
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "moduleResolution": "node"
   }
 }

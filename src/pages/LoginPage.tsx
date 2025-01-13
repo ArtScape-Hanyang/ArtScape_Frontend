@@ -6,6 +6,32 @@ import google from "../asset/google.svg";
 import naver from "../asset/naver.svg";
 import GlobalStyle from "../styles/GlobalStyle";
 
+// 로그인 페이지 컴포넌트
+const LoginPage = () => {
+  return (
+    <MainContainer>
+      <GlobalStyle />
+      <StyledHeader />
+      <TextContainer>
+        <TextContainerTitle>
+          <H1>당신만의 전시를 찾아</H1>
+          <H1>함께 떠나볼까요?</H1>
+        </TextContainerTitle>
+      </TextContainer>
+      <LoginForm />
+      <LineWrapper>
+        <LineContainer />
+        <BodyS400>SNS로 간편 로그인</BodyS400>
+        <LineContainer />
+      </LineWrapper>
+      <SocialLoginBtn>
+        <img src={kakao} alt="소셜카카오" />
+        <img src={google} alt="소셜구글" />
+        <img src={naver} alt="소셜네이버" />
+      </SocialLoginBtn>
+    </MainContainer>
+  );
+};
 // 메인 컨테이너 스타일
 const MainContainer = styled.div`
   width: 25.125rem;
@@ -90,32 +116,5 @@ const BodyS400 = styled.p`
   line-height: 148%; /* 1.11rem */
   letter-spacing: -0.01875rem;
 `;
-
-// 로그인 페이지 컴포넌트
-const LoginPage = () => {
-  return (
-    <MainContainer>
-      <GlobalStyle />
-      <StyledHeader />
-      <TextContainer>
-        <TextContainerTitle>
-          <H1>당신만의 전시를 찾아</H1>
-          <H1>함께 떠나볼까요?</H1>
-        </TextContainerTitle>
-      </TextContainer>
-      <LoginForm />
-      <LineWrapper>
-        <LineContainer />
-        <BodyS400>SNS로 간편 로그인</BodyS400>
-        <LineContainer />
-      </LineWrapper>
-      <SocialLoginBtn>
-        <img src={kakao} alt="소셜카카오" />
-        <img src={google} alt="소셜구글" />
-        <img src={naver} alt="소셜네이버" />
-      </SocialLoginBtn>
-    </MainContainer>
-  );
-};
 
 export default LoginPage;

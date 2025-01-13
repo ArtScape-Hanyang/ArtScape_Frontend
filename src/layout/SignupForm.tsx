@@ -1,6 +1,150 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import CameraIcon from "../asset/camera.svg";
+import { useNavigate } from "react-router-dom";
+import { auth } from "../routes/firebase"; // Firebase 설정 파일
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth"; // Firebase 인증 메서드
+
+const SignupForm: React.FC = () => {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
+
+  const [profileImage, setProfileImage] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const navigate = useNavigate();
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      setProfileImage(file);
+      setImagePreview(URL.createObjectURL(file));
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const { name, email, password, confirmPassword } = formData;
+
+    if (!name || !email || !password || !confirmPassword || !profileImage) {
+      setErrorMessage("모든 필드를 입력하고 프로필 사진을 업로드해주세요.");
+      return;
+    }
+    if (password !== confirmPassword) {
+      setErrorMessage("비밀번호가 일치하지 않습니다.");
+      return;
+    }
+
+    try {
+      // Firebase 회원가입
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const user = userCredential.user;
+
+      // 사용자 프로필 업데이트
+      if (user) {
+        await updateProfile(user, {
+          displayName: name,
+          photoURL: imagePreview || "",
+        });
+      }
+
+      alert("가입이 완료되었습니다!");
+      console.log("Navigating to /login");
+      navigate("/login"); // 로그인 페이지로 이동
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        console.error("Signup error:", err.message);
+        setErrorMessage(err.message || "회원가입 중 오류가 발생했습니다.");
+      } else {
+        console.error("Unexpected error:", err);
+        setErrorMessage("알 수 없는 오류가 발생했습니다.");
+      }
+    }
+  };
+
+  return (
+    <SignupContainer>
+      <StyledForm onSubmit={handleSubmit}>
+        <ImagePreviewWrapper htmlFor="file-input">
+          {imagePreview ? (
+            <ImagePreview src={imagePreview} alt="Profile Preview" />
+          ) : (
+            <PlaceholderIcon src={CameraIcon} alt="Camera Icon" />
+          )}
+        </ImagePreviewWrapper>
+        <FileInput
+          id="file-input"
+          type="file"
+          accept="image/*"
+          onChange={handleImageChange}
+        />
+
+        <Label htmlFor="name">
+          이름 입력 <span>*</span>
+        </Label>
+        <Input
+          type="text"
+          name="name"
+          placeholder="이름 입력"
+          value={formData.name}
+          onChange={handleChange}
+        />
+
+        <Label htmlFor="email">
+          이메일 입력 <span>*</span>
+        </Label>
+        <Input
+          type="email"
+          name="email"
+          placeholder="이메일 입력"
+          value={formData.email}
+          onChange={handleChange}
+        />
+
+        <Label htmlFor="password">
+          비밀번호 입력 <span>*</span>
+        </Label>
+        <Input
+          type="password"
+          name="password"
+          placeholder="비밀번호 입력"
+          value={formData.password}
+          onChange={handleChange}
+        />
+
+        <Label htmlFor="confirmPassword">
+          비밀번호 확인 <span>*</span>
+        </Label>
+        <Input
+          type="password"
+          name="confirmPassword"
+          placeholder="비밀번호 확인"
+          value={formData.confirmPassword}
+          onChange={handleChange}
+        />
+
+        {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
+
+        <Button type="submit">회원가입</Button>
+      </StyledForm>
+    </SignupContainer>
+  );
+};
 
 const SignupContainer = styled.div`
   display: flex;
@@ -87,9 +231,9 @@ const ImagePreviewWrapper = styled.label`
 const ImagePreview = styled.img`
   width: 100%;
   height: 100%;
-  object-fit: cover; /* 이미지를 영역에 꽉 차게 조정 */
-  object-position: center; /* 이미지의 중심을 맞추어 표시 */
-  display: block; /* 이미지가 인라인 요소로 처리되지 않도록 */
+  object-fit: cover;
+  object-position: center;
+  display: block;
 `;
 
 const PlaceholderIcon = styled.img`
@@ -101,120 +245,11 @@ const FileInput = styled.input`
   display: none;
 `;
 
-const SignupForm: React.FC = () => {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-  });
-
-  const [profileImage, setProfileImage] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      setProfileImage(file);
-      setImagePreview(URL.createObjectURL(file));
-    }
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    const { name, email, password, confirmPassword } = formData;
-
-    if (!name || !email || !password || !confirmPassword || !profileImage) {
-      alert("모든 필드를 입력하고 프로필 사진을 업로드해주세요.");
-      return;
-    }
-    if (password !== confirmPassword) {
-      alert("비밀번호가 일치하지 않습니다.");
-      return;
-    }
-
-    const signupData = new FormData();
-    signupData.append("name", name);
-    signupData.append("email", email);
-    signupData.append("password", password);
-    signupData.append("profileImage", profileImage);
-
-    console.log("Signup Data:", signupData);
-
-    alert("회원가입이 완료되었습니다!");
-  };
-
-  return (
-    <SignupContainer>
-      <StyledForm onSubmit={handleSubmit}>
-        <ImagePreviewWrapper htmlFor="file-input">
-          {imagePreview ? (
-            <ImagePreview src={imagePreview} alt="Profile Preview" />
-          ) : (
-            <PlaceholderIcon src={CameraIcon} alt="Camera Icon" />
-          )}
-        </ImagePreviewWrapper>
-        <FileInput
-          id="file-input"
-          type="file"
-          accept="image/*"
-          onChange={handleImageChange}
-        />
-
-        <Label htmlFor="name">
-          이름 입력 <span>*</span>
-        </Label>
-        <Input
-          type="text"
-          name="name"
-          placeholder="이름 입력"
-          value={formData.name}
-          onChange={handleChange}
-        />
-
-        <Label htmlFor="email">
-          이메일 입력 <span>*</span>
-        </Label>
-        <Input
-          type="email"
-          name="email"
-          placeholder="이메일 입력"
-          value={formData.email}
-          onChange={handleChange}
-        />
-
-        <Label htmlFor="password">
-          비밀번호 입력 <span>*</span>
-        </Label>
-        <Input
-          type="password"
-          name="password"
-          placeholder="비밀번호 입력"
-          value={formData.password}
-          onChange={handleChange}
-        />
-
-        <Label htmlFor="confirmPassword">
-          비밀번호 확인 <span>*</span>
-        </Label>
-        <Input
-          type="password"
-          name="confirmPassword"
-          placeholder="비밀번호 확인"
-          value={formData.confirmPassword}
-          onChange={handleChange}
-        />
-
-        <Button type="submit">회원가입</Button>
-      </StyledForm>
-    </SignupContainer>
-  );
-};
+const ErrorMessage = styled.p`
+  color: red;
+  font-size: 1rem;
+  text-align: center;
+  margin-top: 1rem;
+`;
 
 export default SignupForm;
