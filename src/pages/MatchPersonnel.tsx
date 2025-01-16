@@ -4,11 +4,14 @@ import nextbtn from "../asset/nextbtn.svg";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { saveDataToFirestore, getCurrentUserId } from "../utils/firebaseUtils";
+import BackButton from "../components/backBtn";
 
 function MatchPersonnel() {
+  const navigate = useNavigate();
+
   const maxItem = 12;
   const avaliableItem = 4;
-  const navigate = useNavigate();
+
   const [minPeople, setMinPeople] = useState<string | null>(null);
   const [maxPeople, setMaxPeople] = useState<string | null>(null);
 
@@ -38,6 +41,7 @@ function MatchPersonnel() {
   return (
     <MainContainer>
       <GlobalStyle />
+      <BackButton />
       <Title>
         <H1>작가님이 희망하는</H1>
         <H1>단체전 인원 수는 몇 명인가요?</H1>
@@ -85,7 +89,8 @@ const MainContainer = styled.div`
   height: 54.625rem;
   background-color: #ffffff;
   box-sizing: border-box;
-  padding: 0 1.5rem;
+  padding: 1.5rem 1.5rem;
+  overflow: hidden;
 `;
 
 const Title = styled.div`

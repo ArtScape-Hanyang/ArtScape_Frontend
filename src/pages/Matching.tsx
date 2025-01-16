@@ -1,9 +1,9 @@
 import styled from "styled-components";
 import GlobalStyle from "../styles/GlobalStyle";
-import backbtn from "../asset/backbtn.svg";
 import aimatchstar from "../asset/aimatchstar.png";
 import nextbtn from "../asset/nextbtn.svg";
 import { useNavigate } from "react-router-dom";
+import BackButton from "../components/backBtn";
 
 const MainContainer = styled.div`
   width: 25.125rem;
@@ -81,7 +81,7 @@ function Matching() {
   return (
     <MainContainer>
       <GlobalStyle />
-      <img src={backbtn} />
+      <BackButton />
       <Title>
         <AI>AI가 찾아주는</AI>
         <H1>당신의 협업 파트너</H1>

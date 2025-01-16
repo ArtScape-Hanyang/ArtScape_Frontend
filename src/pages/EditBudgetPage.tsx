@@ -1,9 +1,80 @@
-import styled from "styled-components";
-import Header from "../components/header";
-import GlobalStyle from "../styles/GlobalStyle";
 import { useContext, useState } from "react";
+import styled from "styled-components";
+import GlobalStyle from "../styles/GlobalStyle";
+import Header from "../components/header";
 import { BudgetContext } from "../layout/BudgetContext";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { db } from "../routes/firebase";
+import { doc, setDoc } from "firebase/firestore";
+import { useNavigate } from "react-router-dom";
+
+const EditBudgetPage = () => {
+  const { setBudgetItems } = useContext(BudgetContext);
+  const [name, setName] = useState("");
+  const [cost, setCost] = useState("");
+  const navigate = useNavigate();
+
+  const handleAddItem = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const costNumber = parseFloat(cost);
+
+    if (name && !isNaN(costNumber) && costNumber > 0) {
+      const newItem = { id: Date.now(), name, cost: costNumber };
+
+      try {
+        // Firebase에 새로운 데이터로 덮어쓰기
+        const updatedBudgetItems = [newItem]; // 새 항목으로 기존 예산 초기화
+        await setDoc(
+          doc(db, "plans", "mainPlan"),
+          { budget: { budgetItems: updatedBudgetItems } },
+          { merge: true }
+        );
+
+        // Context 업데이트
+        setBudgetItems(updatedBudgetItems);
+
+        alert("예산이 업데이트되었습니다!");
+        setName("");
+        setCost("");
+        navigate("/multi_pln/budget");
+      } catch (error) {
+        console.error("Error updating budget item:", error);
+        alert("예산 업데이트에 실패했습니다.");
+      }
+    }
+  };
+
+  return (
+    <MainContainer>
+      <GlobalStyle />
+      <Header />
+      <TextContainer>
+        <TextContainerTitle>
+          <H2>지출 항목 입력</H2>
+          <BodyM500>예상되는 지출을 자유롭게 작성해보세요!</BodyM500>
+        </TextContainerTitle>
+      </TextContainer>
+      <BudgetForm onSubmit={handleAddItem}>
+        <BudgetContaniner>
+          <M500Grey>지출 항목</M500Grey>
+          <Input
+            type="text"
+            placeholder="항목명"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+          <M500Grey>지출 금액</M500Grey>
+          <Input
+            type="number"
+            placeholder="금액"
+            value={cost}
+            onChange={(e) => setCost(e.target.value)}
+          />
+        </BudgetContaniner>
+        <Button type="submit">입력 완료</Button>
+      </BudgetForm>
+    </MainContainer>
+  );
+};
 
 const MainContainer = styled.div`
   width: 25.125rem;
@@ -105,57 +176,5 @@ const Button = styled.button`
     background-color: #aeaeae;
   }
 `;
-
-const EditBudgetPage = () => {
-  const { setBudgetItems } = useContext(BudgetContext);
-  const [name, setName] = useState("");
-  const [cost, setCost] = useState(""); 
-  const navigate = useNavigate(); 
-  const handleAddItem = (e) => {
-    e.preventDefault(); 
-    const costNumber = parseFloat(cost); 
-
-    if (name && !isNaN(costNumber) && costNumber > 0) {
-      const newItem = { id: Date.now(), name, cost: costNumber };
-      setBudgetItems((prevBudgetItems) => [...prevBudgetItems, newItem]); 
-      setName("");
-      setCost(""); 
-      navigate("/multi_pln/budget");
-    }
-  };
-
-  return (
-    <MainContainer>
-      <GlobalStyle />
-      <Header />
-      <TextContainer>
-        <TextContainerTitle>
-          <H2>지출 항목 입력</H2>
-          <BodyM500>예상되는 지출을 자유롭게 작성해보세요!</BodyM500>
-        </TextContainerTitle>
-      </TextContainer>
-
-      <BudgetForm onSubmit={handleAddItem}>
-        <BudgetContaniner>
-          <M500Grey>지출 항목</M500Grey>
-          <Input
-            type="text"
-            placeholder="항목명"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
-          <M500Grey>지출 금액</M500Grey>
-          <Input
-            type="number"
-            placeholder="금액"
-            value={cost}
-            onChange={(e) => setCost(Number(e.target.value))}
-          />
-        </BudgetContaniner>
-        <Button type="submit">입력 완료</Button>
-      </BudgetForm>
-    </MainContainer>
-  );
-};
 
 export default EditBudgetPage;

@@ -1,32 +1,63 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
-import Header from "../components/header";
+import { useNavigate } from "react-router-dom";
 import GlobalStyle from "../styles/GlobalStyle";
-import add from "../asset/add.svg";
-import { Link } from "react-router-dom";
+import Header from "../components/header";
+import add from "../asset/add.svg"; // 추가 버튼 이미지
+import { deleteDoc, doc, collection, onSnapshot } from "firebase/firestore";
+import { ref, deleteObject } from "firebase/storage";
+import { db, storage } from "../routes/firebase";
 
 const ArtRegiPage = () => {
   const [artworks, setArtworks] = useState<
     {
-      id: number;
-      imagePreview: string | null;
+      id: string;
+      imageUrl: string;
       artworkName: string;
       artworkDescription: string;
     }[]
   >([]);
 
+  const navigate = useNavigate();
+
+  // ✅ Firestore에서 출품작 가져오기 (실시간 업데이트 적용)
   useEffect(() => {
-    // 로컬 스토리지에서 데이터 불러오기
-    const savedArtworks = JSON.parse(localStorage.getItem("artworks") || "[]");
-    setArtworks(savedArtworks);
+    const unsubscribe = onSnapshot(collection(db, "artworks"), (snapshot) => {
+      const fetchedArtworks = snapshot.docs.map((doc) => {
+        const data = doc.data();
+        return {
+          id: doc.id, // Firestore 문서 ID 저장
+          imageUrl: data.imageUrl || "", // ✅ 데이터가 없을 경우 빈 문자열로 처리
+          artworkName: data.artworkName || "작품명 없음",
+          artworkDescription: data.artworkDescription || "설명 없음",
+        };
+      });
+
+      setArtworks(fetchedArtworks);
+      console.log("Fetched Artworks:", fetchedArtworks); // ✅ 콘솔에서 데이터 확인
+    });
+
+    return () => unsubscribe(); // 컴포넌트 언마운트 시 실시간 리스너 해제
   }, []);
 
-  const handleDelete = (id: number) => {
-    // 해당 ID를 가진 출품작 삭제
-    const updatedArtworks = artworks.filter((artwork) => artwork.id !== id);
-    setArtworks(updatedArtworks);
-    // 로컬 스토리지에 업데이트된 데이터 저장
-    localStorage.setItem("artworks", JSON.stringify(updatedArtworks));
+  const handleDelete = async (id: string, imageUrl: string) => {
+    try {
+      // 1️⃣ Firestore 문서 삭제
+      await deleteDoc(doc(db, "artworks", id));
+
+      // 2️⃣ Storage에서 해당 이미지 삭제
+      const imageRef = ref(storage, imageUrl);
+      await deleteObject(imageRef)
+        .then(() => console.log("이미지 삭제 완료!"))
+        .catch((error) => console.error("Storage 이미지 삭제 오류:", error));
+
+      // 3️⃣ 화면에서 해당 항목 제거
+      setArtworks((prevArtworks) =>
+        prevArtworks.filter((artwork) => artwork.id !== id)
+      );
+    } catch (error) {
+      console.error("Error deleting artwork:", error);
+    }
   };
 
   return (
@@ -37,27 +68,27 @@ const ArtRegiPage = () => {
         <H2>출품작 목록</H2>
         <BodyM500>등록된 작품을 확인해보세요!</BodyM500>
       </TextContainerTitle>
-      {artworks.map((artwork) => (
-        <InfoContainer key={artwork.id}>
-          {artwork.imagePreview && (
+
+      {artworks.length > 0 ? (
+        artworks.map((artwork) => (
+          <InfoContainer key={artwork.id}>
             <ImagePreviewWrapper>
-              <ImagePreview
-                src={artwork.imagePreview}
-                alt="등록된 이미지 미리보기"
-              />
+              <ImagePreview src={artwork.imageUrl} alt="등록된 이미지" />
             </ImagePreviewWrapper>
-          )}
-          {artwork.artworkName && <H5>{artwork.artworkName}</H5>}
-          {artwork.artworkDescription && (
+            <H5>{artwork.artworkName}</H5>
             <BodyM500>{artwork.artworkDescription}</BodyM500>
-          )}{" "}
-          {/* 삭제 버튼 추가 */}
-          <DeleteButton onClick={() => handleDelete(artwork.id)}>
-            삭제
-          </DeleteButton>
-        </InfoContainer>
-      ))}
-      <Plusbutton to="/multi_pln/entryedit/defalut">
+            <DeleteButton
+              onClick={() => handleDelete(artwork.id, artwork.imageUrl)}
+            >
+              삭제
+            </DeleteButton>
+          </InfoContainer>
+        ))
+      ) : (
+        <p></p>
+      )}
+
+      <Plusbutton onClick={() => navigate("/multi_pln/entryedit/defalut")}>
         <img src={add} alt="추가버튼" />
       </Plusbutton>
     </MainContainer>
@@ -111,8 +142,9 @@ const H5 = styled.h2`
   letter-spacing: -0.025rem;
   margin: 0;
 `;
-const Plusbutton = styled(Link)`
+const Plusbutton = styled.button`
   display: flex;
+  width: 22.125rem;
   flex-direction: column;
   justify-content: center;
   align-items: center;

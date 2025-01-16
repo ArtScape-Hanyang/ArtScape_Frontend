@@ -4,7 +4,7 @@ import nextbtn from "../asset/nextbtn.svg";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { saveDataToFirestore, getCurrentUserId } from "../utils/firebaseUtils";
-
+import BackButton from "../components/backBtn";
 function MatchLocation() {
   const maxItem = 12;
   const avaliableItem = 6;
@@ -342,6 +342,7 @@ function MatchLocation() {
   return (
     <MainContainer>
       <GlobalStyle />
+      <BackButton />
       <Title>
         <H1>작가님이 단체전을</H1>
         <H1>주최하고자 하는 지역은 어디인가요?</H1>
@@ -442,6 +443,8 @@ const MainContainer = styled.div`
   box-sizing: border-box;
   padding: 0 1.5rem;
   position: relative;
+  padding: 1.5rem 1.5rem;
+  overflow: hidden;
 `;
 
 const Title = styled.div`

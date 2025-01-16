@@ -30,6 +30,8 @@ import { BudgetProvider } from "./layout/BudgetContext";
 import MainPage from "./pages/MainPage";
 import { auth } from "../src/routes/firebase";
 import GlobalStyle from "./styles/GlobalStyle";
+import PlanDetail from "./pages/PlanDetail";
+import PlanListPage from "./pages/PlanListPage";
 
 const App: React.FC = () => {
   const [user, setUser] = useState<any>(null);
@@ -138,6 +140,14 @@ const App: React.FC = () => {
           <Route
             path="/multi_pln/Exhidate"
             element={user ? <PlanDate /> : <Navigate to="/login" />}
+          />
+          <Route
+            path="/plandetail/:id"
+            element={user ? <PlanDetail /> : <Navigate to="/login" />}
+          />
+          <Route
+            path="/explore"
+            element={user ? <PlanListPage /> : <Navigate to="/login" />}
           />
         </Routes>
       </BudgetProvider>

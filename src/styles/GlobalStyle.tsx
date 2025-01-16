@@ -7,7 +7,7 @@ const GlobalStyle = createGlobalStyle`
     height: 54.625rem;
     margin: 0 auto;
     padding: 0rem 1.5rem 0rem 1.5rem;
-    background-color: #f8f8f8;
+    background-color: #e9e9e9;
     
     
   }

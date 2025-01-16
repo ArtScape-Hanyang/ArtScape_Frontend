@@ -1,8 +1,8 @@
-// src/components/Header.tsx
-
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../routes/firebase";
 import logoblack from "../asset/logo-black.svg";
 import ringingbell from "../asset/ringing-bell.svg";
 import chat from "../asset/chatting.svg";
@@ -20,7 +20,7 @@ const HeaderContainer = styled.header`
 
 const Nav = styled.nav`
   display: flex;
-  gap: 6rem;
+  gap: 3.7rem;
   margin: 0 auto;
   justify-content: center;
   align-items: center;
@@ -28,40 +28,67 @@ const Nav = styled.nav`
 `;
 
 const Logo = styled.img`
-  width: 9.08631rem;
   height: 3.5rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 0.625rem;
 `;
 
 const RingingBell = styled.img`
-  width: 1.25rem;
-  height: 1.25rem;
-  padding: 1.5rem 0rem;
+  display: flex;
+  padding: 0rem 1.5rem;
+  justify-content: center;
+  align-items: center;
+  gap: 0.625rem;
+  align-self: stretch;
 `;
 
 const Chatting = styled.img`
-  width: 1.25rem;
-  height: 1.25rem;
+  display: flex;
+  padding: 0rem 1.5rem;
+  justify-content: center;
+  align-items: center;
+  gap: 0.625rem;
+  align-self: stretch;
 `;
 
 const Header: React.FC = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // 사용자가 로그인한 경우
+        setIsLoggedIn(true);
+      } else {
+        // 사용자가 로그아웃한 경우
+        setIsLoggedIn(false);
+      }
+    });
+
+    // 컴포넌트가 언마운트될 때 Firebase listener 구독 해제
+    return () => unsubscribe();
+  }, []);
+
   return (
     <HeaderContainer>
       <GlobalStyle />
       <Nav>
-        <Link to="/matching">
-          <Chatting src={chat} alt="채팅" />
-        </Link>
-        <Link to="/login">
+        {" "}
+        {isLoggedIn && (
+          <Link to="/multi_pln">
+            <RingingBell src={ringingbell} alt="알람" />
+          </Link>
+        )}
+        <Link to="/">
           <Logo src={logoblack} alt="로고블랙" />
         </Link>
-        <Link to="/multi_pln">
-          <RingingBell src={ringingbell} alt="알람" />
-        </Link>
+        {isLoggedIn && (
+          <Link to="/matching">
+            <Chatting src={chat} alt="채팅" />
+          </Link>
+        )}
       </Nav>
     </HeaderContainer>
   );
