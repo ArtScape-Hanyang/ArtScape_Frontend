@@ -1,12 +1,12 @@
 import styled from "styled-components";
 import GlobalStyle from "../styles/GlobalStyle";
-import Button from "../components/Button";
 import nextbtn from "../asset/nextbtn.svg";
 import typeDetail from "../asset/typeDetail.png";
 import SelectButton from "../components/SelectButton";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { saveDataToFirestore, getCurrentUserId } from "../utils/firebaseUtils";
+import BackButton from "../components/backBtn";
 
 function MatchTypePage() {
   const maxItem = 12;
@@ -36,6 +36,7 @@ function MatchTypePage() {
   return (
     <MainContainer>
       <GlobalStyle />
+      <BackButton />
       <Title>
         <H1>작가님은</H1>
         <H1>어떤 전시를 열고 싶으신가요?</H1>
@@ -111,7 +112,8 @@ const MainContainer = styled.div`
   height: 54.625rem;
   background-color: #ffffff;
   box-sizing: border-box;
-  padding: 0 1.5rem;
+  padding: 1.5rem 1.5rem;
+  overflow: hidden;
 `;
 
 const H1 = styled.h1`

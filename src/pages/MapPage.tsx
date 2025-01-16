@@ -6,6 +6,10 @@ import Header from "../components/header";
 import MapChart from "../components/MapChart";
 import markerImage from "../asset/ic-location.png";
 import search from "../asset/search.svg";
+import { db } from "../routes/firebase";
+import { doc, setDoc } from "firebase/firestore";
+import { useNavigate } from "react-router-dom";
+
 const loadKakaoSDK = () => {
   const apiKey = import.meta.env.VITE_API_KEY; // 환경 변수에서 API 키 가져오기
 
@@ -38,6 +42,7 @@ const MapPage = () => {
   const [selectedPlace, setSelectedPlace] = useState(null); // 선택된 장소 저장
   const [map, setMap] = useState(null); // 지도 객체 저장
   const overlayRef = useRef(null); // 오버레이를 참조하기 위한 ref
+  const navigate = useNavigate();
 
   const handleSearch = () => {
     if (!input.trim() || !map) return;
@@ -70,6 +75,31 @@ const MapPage = () => {
       setSelectedPlace(null); // 선택된 장소 초기화
     }
   };
+  const handleSavePlace = async () => {
+    if (!selectedPlace) return;
+
+    try {
+      console.log("Saving Place:", selectedPlace); // ✅ 저장되는 데이터 확인 로그 추가
+
+      await setDoc(
+        doc(db, "plans", "mainPlan"),
+        {
+          location: {
+            name: selectedPlace.content,
+            address: selectedPlace.address,
+            position: selectedPlace.position,
+          },
+        },
+        { merge: true }
+      );
+
+      alert("장소가 저장되었습니다!");
+      navigate("/multi_pln"); // ✅ PlanMain으로 이동
+    } catch (error) {
+      console.error("Error saving location:", error);
+      alert("장소 저장에 실패했습니다.");
+    }
+  };
 
   useEffect(() => {
     // 마운트 시 이벤트 리스너 등록
@@ -96,9 +126,12 @@ const MapPage = () => {
       </SearchContainer>
 
       <Map
-        center={center}
+        center={{ lat: 37.5665, lng: 126.978 }}
         style={{ width: "100%", height: "700px" }}
         level={3}
+        disableDoubleClickZoom={true} // 더블 클릭 줌 비활성화
+        draggable={true} // 드래그 가능 여부 설정
+        zoomable={false} // 🔥 마우스 휠 줌 비활성화
         onCreate={setMap} // 지도 객체 저장
       >
         {markers.map((marker) => (
@@ -126,7 +159,7 @@ const MapPage = () => {
       {selectedPlace && (
         <FixedOverlayContainer ref={overlayRef}>
           <MapChart selectedPlace={selectedPlace} />
-          <Button>이 장소 선택하기</Button>
+          <Button onClick={handleSavePlace}>이 장소 선택하기</Button>
         </FixedOverlayContainer>
       )}
 

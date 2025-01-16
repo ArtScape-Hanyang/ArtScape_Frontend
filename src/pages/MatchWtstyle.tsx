@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import SelectButton from "../components/SelectButton";
 import { useState } from "react";
 import { saveDataToFirestore, getCurrentUserId } from "../utils/firebaseUtils";
+import BackButton from "../components/backBtn";
 
 function MatchWtstyle() {
   const maxItem = 12;
@@ -53,6 +54,7 @@ function MatchWtstyle() {
   return (
     <MainContainer>
       <GlobalStyle />
+      <BackButton />
       <Title>
         <H1>단체전을 함께 하고 싶은</H1>
         <H1>작가님의 스타일에 대해 알려주세요!</H1>
@@ -91,7 +93,8 @@ const MainContainer = styled.div`
   height: 54.625rem;
   background-color: #ffffff;
   box-sizing: border-box;
-  padding: 0 1.5rem;
+  padding: 1.5rem 1.5rem;
+  overflow: hidden;
   position: relative;
 `;
 

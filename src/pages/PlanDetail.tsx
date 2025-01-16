@@ -1,386 +1,95 @@
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../routes/firebase";
 import styled from "styled-components";
 import GlobalStyle from "../styles/GlobalStyle";
 import Header from "../components/header";
 import photo from "../asset/photo.svg";
 import profile from "../asset/profile.png";
-import detail from "../asset/detail.svg";
+import exhibitionphoto from "../asset/exhibitionphoto.svg";
 import seemore from "../asset/seemore.svg";
-import exhibitionphoto from "../asset/exhibitionphoto.png";
 import whitemap from "../asset/whitemap.svg";
-import complete from "../asset/complete.svg";
-import { useNavigate } from "react-router-dom";
-import Button from "../components/Button";
-import {
-  doc,
-  getDoc,
-  collection,
-  getDocs,
-  addDoc,
-  setDoc,
-  deleteDoc,
-} from "firebase/firestore";
-import { useEffect, useState, useRef } from "react";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { storage, db } from "../routes/firebase"; // Firebase 설정 파일
+import detail from "../asset/detail.svg";
 
-function PlanMain() {
-  const navigate = useNavigate();
-  const [key, setKey] = useState(0); // 컴포넌트 강제 초기화용 키
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [artworkImages, setArtworkImages] = useState<string[]>([]);
-  const [startDate, setStartDate] = useState<string | null>(null);
-  const [endDate, setEndDate] = useState<string | null>(null);
-  const [notes, setNotes] = useState<{ mention: string; text: string }[]>([]);
-  const [budget, setBudget] = useState({
-    budgetItems: [],
-    totalCost: 0,
-    perPersonCost: 0,
-  });
-  const [location, setLocation] = useState(null);
+const PlanDetail = () => {
+  const { id } = useParams();
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-
-  useEffect(() => {
-    const fetchArtworks = async () => {
-      try {
-        const querySnapshot = await getDocs(collection(db, "artworks"));
-        const fetchedImages = querySnapshot.docs.map(
-          (doc) => doc.data().imageUrl
-        );
-
-        console.log("✅ 가져온 이미지 리스트:", fetchedImages);
-        setArtworkImages(fetchedImages);
-      } catch (error) {
-        console.error("❌ Error fetching artworks:", error);
-      }
-    };
-
-    fetchArtworks();
-  }, [key]); // ✅ key 값이 변경될 때마다 실행
+  const [posterImage, setPosterImage] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const docRef = doc(db, "plans", "mainPlan");
+        if (!id) {
+          console.error("No ID provided in the URL");
+          return;
+        }
+
+        console.log("Fetched ID:", id);
+        const docRef = doc(db, "plandetail", id); // ✅ `plandetail/{id}`에서 불러오기
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
-          const data = docSnap.data();
-          console.log("✅ 불러온 데이터:", data); // 데이터 확인
-          setTitle(data.title || "");
-          setDescription(data.description || "");
+          const fetchedData = docSnap.data();
+          console.log("Fetched Data from plandetail:", fetchedData);
+
+          setData({
+            ...fetchedData,
+            artworkImages: fetchedData.artworkImages || [],
+            budget: fetchedData.budget || {
+              budgetItems: [],
+              totalCost: 0,
+              perPersonCost: 0,
+            },
+            notes: fetchedData.notes || [],
+          });
+
+          // ✅ 포스터 이미지도 `plandetail/{id}`에서 가져오기
+          setPosterImage(fetchedData.posterImage || null);
         } else {
-          console.log("❌ No such document!");
+          console.log("No such document in plandetail!");
+          setData({
+            title: "제목 없음",
+            description: "설명 없음",
+            startDate: null,
+            endDate: null,
+            location: null,
+            artworkImages: [],
+            budget: { budgetItems: [], totalCost: 0, perPersonCost: 0 },
+            notes: [],
+            posterImage: null,
+          });
         }
       } catch (error) {
-        console.error("❌ Error fetching plan info:", error);
+        console.error("Error fetching plandetail:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchData();
-  }, []);
+  }, [id]);
 
-  useEffect(() => {
-    const fetchDates = async () => {
-      try {
-        const docRef = doc(db, "plans", "mainPlan");
-        const docSnap = await getDoc(docRef);
-
-        if (docSnap.exists()) {
-          const data = docSnap.data();
-          setStartDate(data.startDate || null);
-          setEndDate(data.endDate || null);
-        } else {
-          console.log("No such document!");
-        }
-      } catch (error) {
-        console.error("Error fetching dates:", error);
-      }
-    };
-
-    fetchDates();
-  }, []);
-
-  useEffect(() => {
-    const fetchNotes = async () => {
-      try {
-        const docRef = doc(db, "plans", "mainPlan");
-        const docSnap = await getDoc(docRef);
-
-        if (docSnap.exists()) {
-          const data = docSnap.data();
-          console.log("📌 Fetched Notes:", data.notes); // ✅ 가져온 데이터 확인
-          setNotes(data.notes || []);
-        } else {
-          console.log("❌ No notes found!");
-        }
-      } catch (error) {
-        console.error("❌ Error fetching notes:", error);
-      }
-    };
-
-    fetchNotes();
-  }, []);
-
-  useEffect(() => {
-    const fetchBudget = async () => {
-      try {
-        const docSnap = await getDoc(doc(db, "plans", "mainPlan"));
-        if (docSnap.exists()) {
-          const data = docSnap.data();
-          setBudget(
-            data.budget || { budgetItems: [], totalCost: 0, perPersonCost: 0 }
-          );
-        } else {
-          console.log("No budget data found");
-        }
-      } catch (error) {
-        console.error("Error fetching budget:", error);
-      }
-    };
-
-    fetchBudget();
-  }, []);
-
-  useEffect(() => {
-    const fetchLocation = async () => {
-      try {
-        const docSnap = await getDoc(doc(db, "plans", "mainPlan"));
-
-        if (docSnap.exists()) {
-          const locationData = docSnap.data().location || null;
-          console.log("Fetched Location:", locationData); // ✅ 불러온 데이터 확인
-          setLocation(locationData);
-        } else {
-          console.log("No location data found");
-        }
-      } catch (error) {
-        console.error("Error fetching location:", error);
-      }
-    };
-
-    fetchLocation();
-  }, []);
-  const handleNextImage = () => {
-    if (artworkImages.length > 0) {
-      setCurrentImageIndex(
-        (prevIndex) => (prevIndex + 1) % artworkImages.length
-      );
-    }
-  };
-
-  const handlePrevImage = () => {
-    if (artworkImages.length > 0) {
-      setCurrentImageIndex((prevIndex) =>
-        prevIndex === 0 ? artworkImages.length - 1 : prevIndex - 1
-      );
-    }
-  };
-  const [posterImage, setPosterImage] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
-
-  // 🔹 Firebase에서 기존 포스터 이미지 가져오기 (초기 로드 시)
-  useEffect(() => {
-    const fetchPoster = async () => {
-      try {
-        const docSnap = await getDoc(doc(db, "plans", "mainPlan"));
-        if (docSnap.exists()) {
-          const data = docSnap.data();
-          setPosterImage(data.posterImage || null);
-        }
-      } catch (error) {
-        console.error("❌ Error fetching poster:", error);
-      }
-    };
-    fetchPoster();
-  }, []);
-
-  // 🔹 파일 업로드 핸들러 (Firebase Storage에 저장)
-  const handleFileChange = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    if (!event.target.files || event.target.files.length === 0) return;
-
-    const file = event.target.files[0];
-    const storageRef = ref(storage, `posters/${file.name}`); // 🔥 Storage 경로 설정
-
-    try {
-      await uploadBytes(storageRef, file); // 🔥 Firebase Storage에 업로드
-      const downloadURL = await getDownloadURL(storageRef); // 🔥 업로드된 이미지 URL 가져오기
-
-      setPosterImage(downloadURL); // ✅ 이미지 상태 업데이트
-
-      // 🔹 Firestore에 저장
-      await setDoc(
-        doc(db, "plans", "mainPlan"),
-        { posterImage: downloadURL },
-        { merge: true }
-      );
-
-      console.log("✅ 포스터 이미지 저장 완료:", downloadURL);
-    } catch (error) {
-      console.error("❌ Error uploading poster image:", error);
-    }
-  };
-
-  useEffect(() => {
-    const saveToFirestore = async () => {
-      if (
-        title ||
-        description ||
-        startDate ||
-        endDate ||
-        location ||
-        notes.length > 0
-      ) {
-        try {
-          await setDoc(doc(db, "plans", "mainPlan"), {
-            title,
-            description,
-            artworkImages,
-            startDate,
-            endDate,
-            notes,
-            budget,
-            location,
-            posterImage,
-          });
-          console.log("✅ plans/mainPlan에 데이터 저장됨");
-        } catch (error) {
-          console.error("❌ plans/mainPlan 저장 오류:", error);
-        }
-      }
-    };
-
-    saveToFirestore();
-  }, [
-    title,
-    description,
-    startDate,
-    endDate,
-    location,
-    notes,
-    artworkImages,
-    budget,
-    posterImage,
-  ]);
-
-  const resetForm = async () => {
-    console.log("🔄 PlanMain 상태 초기화");
-    setTitle("");
-    setDescription("");
-    setArtworkImages([]); // 🔥 artworkImages도 초기화
-    setStartDate(null);
-    setEndDate(null);
-    setNotes([]);
-    setBudget({ budgetItems: [], totalCost: 0, perPersonCost: 0 });
-    setLocation(null);
-    setPosterImage(null);
-
-    try {
-      await deleteDoc(doc(db, "plans", "mainPlan"));
-      console.log("🗑️ plans/mainPlan 초기화 완료");
-    } catch (error) {
-      console.error("❌ plans/mainPlan 초기화 실패:", error);
-    }
-  };
-
-  const handleComplete = async () => {
-    try {
-      const mainPlanRef = doc(db, "plans", "mainPlan");
-      const mainPlanSnap = await getDoc(mainPlanRef);
-
-      if (mainPlanSnap.exists()) {
-        const mainPlanData = mainPlanSnap.data();
-
-        // ✅ `plandetail`에 새로운 문서로 저장
-        await addDoc(collection(db, "plandetail"), mainPlanData);
-
-        // ✅ `plans/mainPlan` 초기화
-        await resetForm(); // ✅ "완료" 버튼을 눌렀을 때만 실행!
-
-        // ✅ Firestore에서 artworks 컬렉션 삭제 (artworkImages 완전히 초기화)
-        const querySnapshot = await getDocs(collection(db, "artworks"));
-        querySnapshot.forEach(async (doc) => {
-          await deleteDoc(doc.ref);
-        });
-
-        // ✅ 상태 초기화
-        setTitle("");
-        setDescription("");
-        setArtworkImages([]); // 🔥 artworkImages 강제 초기화
-        setStartDate(null);
-        setEndDate(null);
-        setNotes([]);
-        setBudget({ budgetItems: [], totalCost: 0, perPersonCost: 0 });
-        setLocation(null);
-        setPosterImage(null);
-
-        // 🔥 강제 리렌더링
-        setKey((prevKey) => prevKey + 1);
-
-        alert("✅ 데이터가 저장되었습니다!");
-        navigate("/explore");
-      } else {
-        console.error("❌ plans/mainPlan 데이터 없음!");
-      }
-    } catch (error) {
-      console.error("❌ Error moving data to plandetail:", error);
-      alert("저장에 실패했습니다.");
-    }
-  };
-
-  const handleNoteClick = (note: { mention: string; text: string }) => {
-    // PlanNote 페이지로 이동하면서 메모 데이터를 전달
-    navigate("/multi_pln/note", { state: { note } });
-  };
-
-  const handleTitleClick = () => {
-    navigate("/multi_pln/info");
-  };
-
-  const handleDateClick = () => {
-    navigate("/multi_pln/Exhidate");
-  };
-
-  const handleLocClick = () => {
-    navigate("/multi_pln/map");
-  };
-
-  const handleBudgetClick = () => {
-    navigate("/multi_pln/budget");
-  };
-
-  const handleEntryClick = () => {
-    navigate("entry/defalut");
-  };
+  if (loading) return <p>Loading...</p>;
+  if (!data) return <p>Data not found</p>;
 
   return (
-    <MainContainer key={key}>
+    <MainContainer>
       <GlobalStyle />
-
       <Header />
       <TitleContainer>
         <Profile>
           {posterImage ? (
             <img src={posterImage} alt="Uploaded Poster" />
           ) : (
-            <img src={profile} alt="Default Profile" />
+            <img src={photo} alt="Default Profile" />
           )}
         </Profile>
         <InputContainer>
-          <TitleInput
-            value={title || ""}
-            placeholder="전시 제목 입력"
-            readOnly
-            onClick={handleTitleClick}
-          />
-          <ContentInput
-            value={description || ""}
-            placeholder="전시 설명 입력..."
-            readOnly
-            onClick={handleTitleClick}
-          />
+          <TitleInput value={data.title || ""} readOnly />
+          <ContentInput value={data.description || ""} readOnly />
         </InputContainer>
       </TitleContainer>
       <ArtistContainer>
@@ -406,69 +115,97 @@ function PlanMain() {
         <H1>전시 출품작</H1>
         <Items>
           <ItemName>
-            <ItemArtist>
-              <ProfileImg width="1.75rem" height="1.75rem" src={profile} />
-              <Name>김다현</Name>
-            </ItemArtist>
-            <SeemoreCon onClick={handleEntryClick}>
+            <SeemoreCon>
               <img src={seemore} />
               <img src={seemore} />
               <img src={seemore} />
             </SeemoreCon>
           </ItemName>
           <ItemImgContainer>
-            {artworkImages.length > 0 ? (
+            {data.artworkImages?.length > 0 ? (
               <>
-                <CarouselButton onClick={handlePrevImage}>{"<"}</CarouselButton>
+                <CarouselButton
+                  onClick={() =>
+                    setCurrentImageIndex(
+                      (prev) =>
+                        (prev - 1 + (data.artworkImages?.length || 0)) %
+                        (data.artworkImages?.length || 1)
+                    )
+                  }
+                >
+                  {"<"}
+                </CarouselButton>
                 <img
-                  src={artworkImages[currentImageIndex]}
+                  src={data.artworkImages?.[currentImageIndex] || ""}
                   alt={`Artwork ${currentImageIndex}`}
                 />
-                <CarouselButton onClick={handleNextImage}>{">"}</CarouselButton>
+                <CarouselButton
+                  onClick={() =>
+                    setCurrentImageIndex(
+                      (prev) => (prev + 1) % (data.artworkImages?.length || 1)
+                    )
+                  }
+                >
+                  {">"}
+                </CarouselButton>
               </>
             ) : (
-              <img src={exhibitionphoto} />
+              <p>출품작이 없습니다.</p>
             )}
           </ItemImgContainer>
         </Items>
         <Items>
           <ItemName>
-            <ItemArtist>
-              <ProfileImg width="1.75rem" height="1.75rem" src={profile} />
-              <Name>이재욱</Name>
-            </ItemArtist>
-            <SeemoreCon onClick={handleEntryClick}>
+            <SeemoreCon>
               <img src={seemore} />
               <img src={seemore} />
               <img src={seemore} />
             </SeemoreCon>
           </ItemName>
           <ItemImgContainer>
-            {artworkImages.length > 0 ? (
+            {data.artworkImages?.length > 0 ? (
               <>
-                <CarouselButton onClick={handlePrevImage}>{"<"}</CarouselButton>
+                <CarouselButton
+                  onClick={() =>
+                    setCurrentImageIndex(
+                      (prev) =>
+                        (prev - 1 + (data.artworkImages?.length || 0)) %
+                        (data.artworkImages?.length || 1)
+                    )
+                  }
+                >
+                  {"<"}
+                </CarouselButton>
                 <img
-                  src={artworkImages[currentImageIndex]}
+                  src={data.artworkImages?.[currentImageIndex] || ""}
                   alt={`Artwork ${currentImageIndex}`}
                 />
-                <CarouselButton onClick={handleNextImage}>{">"}</CarouselButton>
+                <CarouselButton
+                  onClick={() =>
+                    setCurrentImageIndex(
+                      (prev) => (prev + 1) % (data.artworkImages?.length || 1)
+                    )
+                  }
+                >
+                  {">"}
+                </CarouselButton>
               </>
             ) : (
-              <img src={exhibitionphoto} />
+              <p>출품작이 없습니다.</p>
             )}
           </ItemImgContainer>
         </Items>
       </ItemsContainer>
+
       <PosterContainer>
         <PosterDetail>
           <H1>전시 포스터</H1>
-          <SeemoreCon onClick={() => fileInputRef.current?.click()}>
+          <SeemoreCon>
             <img src={seemore} />
             <img src={seemore} />
             <img src={seemore} />
           </SeemoreCon>
         </PosterDetail>
-
         <Poster>
           {posterImage ? (
             <img src={posterImage} alt="Uploaded Poster" />
@@ -476,43 +213,34 @@ function PlanMain() {
             <img src={exhibitionphoto} alt="Default Poster" />
           )}
         </Poster>
-
-        {/* 🔥 파일 업로드 Input (숨김) */}
-        <input
-          type="file"
-          accept="image/*"
-          ref={fileInputRef}
-          style={{ display: "none" }}
-          onChange={handleFileChange}
-        />
       </PosterContainer>
+
       <ExhibitionDay>
         <H1>전시 날짜</H1>
         <Day
-          placeholder={
-            startDate && endDate
-              ? `${startDate} ~ ${endDate}`
-              : "전시 날짜 선택"
+          value={
+            data.startDate && data.endDate
+              ? `${data.startDate} ~ ${data.endDate}`
+              : "전시 날짜 선택되지 않음"
           }
           readOnly
-          onClick={handleDateClick}
         />
       </ExhibitionDay>
+
       <ExhibitonLoc>
         <H1>전시 장소</H1>
-        <Map onClick={handleLocClick}>
+        <Map>
           <img src={whitemap} alt="지도 이미지" />
         </Map>
-
         <DetailMap>
           <h3>상세 주소</h3>
           <input
             type="text"
             value={
-              location
-                ? `${location.name}, ${location.address}`
-                : "장소를 선택해주세요"
-            } // ✅ 기본값 유지
+              data.location
+                ? `${data.location.name}, ${data.location.address}`
+                : ""
+            }
             readOnly
           />
         </DetailMap>
@@ -520,70 +248,44 @@ function PlanMain() {
 
       <BudgetContainer>
         <H1>전시 예산</H1>
-        {budget.budgetItems.map((item, index) => (
+        {data.budget?.budgetItems.map((item, index) => (
           <PlusContent key={index}>
             <p>{item.name}</p>
             <p>₩{item.cost.toLocaleString()}</p>
           </PlusContent>
         ))}
-        <PlusButton onClick={handleBudgetClick}>
-          <p>+ 항목 추가하기</p>
-        </PlusButton>
         <TotalBuget>
           <p>총 예상 비용</p>
-          <p>₩{budget.totalCost.toLocaleString()}</p>
+          <p>₩{data.budget?.totalCost.toLocaleString()}</p>
         </TotalBuget>
         <PersonBudget>
           <p>인당 총 예상 비용</p>
           <Money>
             <p>₩</p>
-            <p>{budget.perPersonCost.toLocaleString()}</p>
+            <p>{data.budget?.perPersonCost.toLocaleString()}</p>
           </Money>
         </PersonBudget>
       </BudgetContainer>
+
       <NoteContainer>
         <H1>Note</H1>
-        {(notes.length > 0 ? notes : [{ mention: "", text: "" }]).map(
-          (note, index) => (
+        {data.notes.length > 0 ? (
+          data.notes.map((note, index) => (
             <input
               key={index}
               type="text"
               value={`${note.mention ? `@${note.mention} ` : ""}${note.text}`}
               readOnly
-              onClick={() => handleNoteClick(note)}
-              placeholder="메모를 입력하세요"
             />
-          )
+          ))
+        ) : (
+          <input type="text" value="메모가 없습니다." readOnly />
         )}
       </NoteContainer>
-
-      <BothContainer>
-        <H1>우리의 공통점은</H1>
-        <BothComponent>
-          <Both width="2.93rem">
-            <p>동양화</p>
-          </Both>
-          <Both width="2.93rem">
-            <p>한국화</p>
-          </Both>
-          <Both width="4.81rem">
-            <p>계획형이에요</p>
-          </Both>
-        </BothComponent>
-      </BothContainer>
-      <BtnContainer>
-        <img src={complete} />
-        <Button
-          width="17.37rem"
-          label="완료"
-          backgroundColor="#52C1BF"
-          color="white"
-          onClick={handleComplete}
-        ></Button>
-      </BtnContainer>
     </MainContainer>
   );
-}
+};
+
 const MainContainer = styled.div`
   width: 25.125rem;
   height: auto;
@@ -1121,4 +823,4 @@ const CarouselButton = styled.button`
     right: 10px;
   }
 `;
-export default PlanMain;
+export default PlanDetail;

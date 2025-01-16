@@ -4,8 +4,11 @@ import Button from "../components/Button";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getDataFromFirestore, getCurrentUserId } from "../utils/firebaseUtils";
+import BackButton from "../components/backBtn";
 
 function MatchMchlist() {
+  const navigate = useNavigate();
+
   interface MatchData {
     selectedPrice: string;
     selectedSize: string;
@@ -60,8 +63,6 @@ function MatchMchlist() {
     return <p>Loading...</p>;
   }
 
-  const navigate = useNavigate();
-
   const handlePrevClick = () => {
     navigate("/matching/type");
   };
@@ -72,6 +73,7 @@ function MatchMchlist() {
 
   return (
     <MainContainer>
+      <BackButton />
       <GlobalStyle />
       <Title>
         <H1>작가님의 전시 스타일을</H1>
@@ -81,15 +83,15 @@ function MatchMchlist() {
         <Container>
           <ResultComponent>
             <Label>전시 입장 가격</Label>
-            <ResultBtn width="5.62rem">{data.selectedPrice}</ResultBtn>
+            <ResultBtn width="5.656rem">{data.selectedPrice}</ResultBtn>
           </ResultComponent>
           <ResultComponent>
             <Label>전시 규모</Label>
-            <ResultBtn width="5.62rem">{data.selectedSize}</ResultBtn>
+            <ResultBtn width="5.656rem">{data.selectedSize}</ResultBtn>
           </ResultComponent>
           <ResultComponent>
             <Label>단체전 인원 수</Label>
-            <ResultBtn width="9.75rem">
+            <ResultBtn width="10rem">
               {data.groupSize || "입력되지 않음"}
             </ResultBtn>
           </ResultComponent>
@@ -107,7 +109,6 @@ function MatchMchlist() {
               )}
             </Btns>
           </ResultComponent>
-
           <ResultComponent>
             <Label>작품 형태</Label>
             <Btns>
@@ -157,7 +158,8 @@ const MainContainer = styled.div`
   height: auto;
   background-color: #ffffff;
   box-sizing: border-box;
-  padding: 0 1.5rem;
+  padding: 1.5rem 1.5rem;
+  overflow: hidden;
   position: relative;
 `;
 

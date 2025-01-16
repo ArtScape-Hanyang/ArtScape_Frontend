@@ -11,6 +11,19 @@ import { useNavigate } from "react-router-dom"; // 페이지 이동
 const Navbar = () => {
   const navigate = useNavigate();
 
+  const handleServiceClick = () => {
+    navigate("/matching");
+  };
+  const handleContacteClick = () => {
+    navigate("/multi_pln");
+  };
+  const handleHomeClick = () => {
+    navigate("/");
+  };
+  const handleExporeClick = () => {
+    navigate("/explore");
+  };
+
   const handleLogout = async () => {
     try {
       await signOut(auth); // Firebase 로그아웃
@@ -25,21 +38,19 @@ const Navbar = () => {
   return (
     <NavbarContainer>
       <NavLinks>
-        <NavLink href="#home">
+        <NavLink as="button" onClick={handleHomeClick}>
           <NavIcon src={HomeIcon} alt="Home" />
         </NavLink>
-        <NavLink href="#about">
-          <NavIcon src={WebIcon} alt="About" />
+        <NavLink as="button" onClick={handleExporeClick}>
+          <NavIcon src={WebIcon} alt="Explore" />
         </NavLink>
-        <NavLink href="#services">
+        <NavLink as="button" onClick={handleServiceClick}>
           <NavIcon src={StarIcon} alt="Services" />
         </NavLink>
-        <NavLink href="#contact">
+        <NavLink as="button" onClick={handleContacteClick}>
           <NavIcon src={CTIcon} alt="Contact" />
         </NavLink>
         <NavLink as="button" onClick={handleLogout}>
-          {" "}
-          {/* 로그아웃 버튼으로 동작 */}
           <NavIcon src={ABIcon} alt="Logout" />
         </NavLink>
       </NavLinks>

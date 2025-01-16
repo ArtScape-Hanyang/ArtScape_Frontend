@@ -1,11 +1,16 @@
 import { useState, useRef } from "react";
 import styled from "styled-components";
-import Header from "../components/header";
+import { useNavigate } from "react-router-dom";
+import { storage, db } from "../routes/firebase"; // Firebase 설정 파일
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { collection, addDoc } from "firebase/firestore";
+import { v4 as uuidv4 } from "uuid";
 import GlobalStyle from "../styles/GlobalStyle";
+import Header from "../components/header";
 import photos from "../asset/photos.svg";
-import { useNavigate } from "react-router-dom"; // useNavigate 추가
 
 const ArtRegiDetailPage = () => {
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [artworkName, setArtworkName] = useState<string>("");
   const [artworkDescription, setArtworkDescription] = useState<string>("");
@@ -23,29 +28,45 @@ const ArtRegiDetailPage = () => {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
+      setImageFile(file);
       setImagePreview(URL.createObjectURL(file));
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const newArtwork = {
-      id: Date.now(),
-      imagePreview,
-      artworkName,
-      artworkDescription,
-    };
+    if (!imageFile || !artworkName || !artworkDescription) {
+      alert("모든 필드를 채워주세요!");
+      return;
+    }
 
-    // 기존 저장된 데이터를 불러오고 새로운 데이터를 추가
-    const savedArtworks = JSON.parse(localStorage.getItem("artworks") || "[]");
-    const updatedArtworks = [...savedArtworks, newArtwork];
-    localStorage.setItem("artworks", JSON.stringify(updatedArtworks));
+    try {
+      // ✅ 1. Firebase Storage에 이미지 업로드
+      const imageRef = ref(storage, `artworks/${uuidv4()}`);
+      await uploadBytes(imageRef, imageFile);
 
-    alert("출품작이 등록되었습니다!");
+      // ✅ 2. 업로드된 이미지의 URL 가져오기
+      const imageUrl = await getDownloadURL(imageRef);
 
-    // ArtRegiPage로 이동
-    navigate("/multi_pln/entry/defalut");
+      // ✅ 3. Firestore에 메타데이터 저장
+      const newArtwork = {
+        imageUrl, // ✅ Firestore에 imageUrl 필드로 저장
+        artworkName,
+        artworkDescription,
+        createdAt: new Date(),
+      };
+
+      await addDoc(collection(db, "artworks"), newArtwork);
+
+      alert("출품작이 등록되었습니다!");
+
+      // ✅ 4. 출품작 목록 페이지로 이동
+      navigate("/multi_pln/entry/defalut");
+    } catch (error) {
+      console.error("Error uploading artwork:", error);
+      alert("작품 등록 중 오류가 발생했습니다.");
+    }
   };
 
   return (
@@ -81,7 +102,6 @@ const ArtRegiDetailPage = () => {
             value={artworkName}
             onChange={(e) => setArtworkName(e.target.value)}
           />
-
           <Label htmlFor="artwork-description">
             <H5>작품소개</H5>
           </Label>

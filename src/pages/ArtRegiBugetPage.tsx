@@ -1,14 +1,113 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import GlobalStyle from "../styles/GlobalStyle";
 import Header from "../components/header";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import { BudgetContext } from "../layout/BudgetContext"; // Context 불러오기
+import { db } from "../routes/firebase";
+import { doc, setDoc, getDoc } from "firebase/firestore";
 
+const ArtRegiBugetPage = () => {
+  const navigate = useNavigate();
+  const { budgetItems, totalCost, perPersonCost, setBudgetItems } =
+    useContext(BudgetContext);
+  const [peopleCount, setPeopleCount] = useState(1);
+
+  useEffect(() => {
+    const fetchBudget = async () => {
+      try {
+        const docRef = doc(db, "plans", "mainPlan");
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          setBudgetItems(data.budget?.budgetItems || []);
+        }
+      } catch (error) {
+        console.error("Error fetching budget data:", error);
+      }
+    };
+
+    fetchBudget();
+  }, [setBudgetItems]);
+
+  const handleModifyClick = () => {
+    navigate("/multi_pln/budget/edit");
+  };
+
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    try {
+      await setDoc(
+        doc(db, "plans", "mainPlan"),
+        {
+          budget: {
+            budgetItems,
+            totalCost,
+            perPersonCost: perPersonCost(peopleCount),
+          },
+        },
+        { merge: true }
+      );
+      alert("예산이 저장되었습니다!");
+      navigate("/multi_pln");
+    } catch (error) {
+      console.error("Error saving budget:", error);
+      alert("예산 저장에 실패했습니다.");
+    }
+  };
+
+  return (
+    <MainContainer>
+      <GlobalStyle />
+      <Header />
+      <TextContainerTitle>
+        <Label>1인당 총 예상 비용</Label>
+      </TextContainerTitle>
+      <CountNumContainer>
+        <CountNum>{perPersonCost(peopleCount)}</CountNum>
+        <CountText>원</CountText>
+      </CountNumContainer>
+      <CountNumContainer2>
+        <Label2>총 예상 비용</Label2>
+        <Label2>₩</Label2>
+        <CountNum2>{totalCost}</CountNum2>
+      </CountNumContainer2>
+      <CountNumContainer2>
+        <Label>
+          참여 인원 수:
+          <Input
+            type="number"
+            min="1"
+            value={peopleCount}
+            onChange={(e) => setPeopleCount(Number(e.target.value))}
+          />
+        </Label>
+      </CountNumContainer2>
+      <BudgetForm onSubmit={handleSave}>
+        {budgetItems.map((item) => (
+          <BudgetContaniner key={item.id}>
+            <TextField>
+              <M500Grey>{item.name}</M500Grey>
+              <BodyM500>₩{item.cost.toLocaleString("en-US")}</BodyM500>
+            </TextField>
+          </BudgetContaniner>
+        ))}
+        <ButtonContainer>
+          <Button type="button" onClick={handleModifyClick}>
+            수정
+          </Button>
+          <SaveButton type="submit">완료</SaveButton>
+        </ButtonContainer>
+      </BudgetForm>
+    </MainContainer>
+  );
+};
 const MainContainer = styled.div`
   width: 25.125rem;
   min-height: 54.625rem;
-  background-color: #ffffff;
+  background: var(--primary-White, #ffffff);
   box-sizing: border-box;
 `;
 
@@ -63,7 +162,7 @@ const CountNumContainer2 = styled(CountNumContainer)`
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 0rem;
+  margin: 0;
 `;
 const CountNum = styled.p`
   overflow: hidden;
@@ -77,6 +176,7 @@ const CountNum = styled.p`
   font-weight: 700;
   line-height: 2rem; /* 80% */
   letter-spacing: -0.0625rem;
+  margin: 0;
 `;
 const CountNum2 = styled(CountNum)`
   overflow: hidden;
@@ -106,27 +206,6 @@ const CountText = styled.p`
   letter-spacing: -0.04375rem;
 `;
 
-const Button = styled.button`
-  width: 22.125rem;
-  height: 4rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 1rem;
-  background: var(--primary-G500, #52c1bf);
-  color: #fafbfb;
-  font-family: Pretendard;
-  font-size: 1.25rem;
-  font-weight: 600;
-  line-height: 1.25rem;
-
-  margin: 1.5rem;
-
-  &:hover {
-    background-color: #aeaeae;
-  }
-`;
-
 const BudgetContaniner = styled.div`
   display: flex;
   width: 20.125rem;
@@ -138,8 +217,35 @@ const BudgetContaniner = styled.div`
   border: 1px solid var(--Gray-Scale-G100, #e7e7ee);
   background: var(--primary-White, #fafbfb);
 
-  margin-left: 1.5rem;
-  margin-top: 2.5rem;
+  margin: 2.5rem 0 1rem 1.5rem;
+
+  p:first-child {
+    overflow: hidden;
+    color: var(--Gray-Scale-G400, #656572);
+    text-overflow: ellipsis;
+
+    /* Body/M500 */
+    font-family: Pretendard;
+    font-size: 1rem;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 1rem; /* 100% */
+    letter-spacing: -0.025rem;
+  }
+  p:last-child {
+    overflow: hidden;
+    color: var(--Gray-Scale-Black, #17171b);
+    text-align: right;
+    text-overflow: ellipsis;
+
+    /* Body/M500 */
+    font-family: Pretendard;
+    font-size: 1rem;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 1rem; /* 100% */
+    letter-spacing: -0.025rem;
+  }
 `;
 const BodyM500 = styled.p`
   color: var(--Gray-Scale-G400, #656572);
@@ -199,61 +305,48 @@ const Input = styled.input`
     color: var(--Gray-Scale-G300, #9696a6); /* 플레이스홀더 색상 변경 */
   }
 `;
-const ArtRegiBugetPage = () => {
-  const navigate = useNavigate(); // 페이지 전환을 위한 useNavigate 사용
-  const { budgetItems, totalCost, perPersonCost } = useContext(BudgetContext);
-  const [peopleCount, setPeopleCount] = useState(1);
+const SaveButton = styled.button`
+  width: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 1rem;
+  background: var(--primary-G500, #52c1bf);
+  color: #fafbfb;
+  font-family: Pretendard;
+  font-size: 1.25rem;
+  font-weight: 600;
+  line-height: 1.25rem;
 
-  const handleModifyClick = () => {
-    navigate("/multi_pln/budget/edit"); // 항목 추가 페이지로 이동
-  };
-  // budgetItems 상태 변경 시 렌더링되도록 useEffect 추가
-  useEffect(() => {
-    // 렌더링 로직이나 상태에 따라 추가적인 로직을 넣을 수 있습니다.
-  }, [budgetItems]); // budgetItems가 변경될 때마다 실행
+  &:hover {
+    background-color: #aeaeae;
+  }
+`;
+const ButtonContainer = styled.div`
+  width: 22.125rem;
+  height: 4rem;
+  display: flex;
+  padding: 0.75rem 1rem;
+  justify-content: flex-start;
+  gap: 0.5rem;
+  margin: 0 auto;
+`;
 
-  return (
-    <MainContainer>
-      <GlobalStyle />
-      <Header />
-      <TextContainerTitle>
-        <Label>1인당 총 예상 비용</Label>
-      </TextContainerTitle>
-      <CountNumContainer>
-        <CountNum>{perPersonCost(peopleCount).toLocaleString()}</CountNum>
-        <CountText>원</CountText>
-      </CountNumContainer>
-      <CountNumContainer2>
-        <Label2>총 예상 비용</Label2>
-        <Label2>₩</Label2>
-        <CountNum2>{totalCost.toLocaleString()}</CountNum2>
-      </CountNumContainer2>
-      <CountNumContainer2>
-        <Label>
-          참여 인원 수:
-          <Input
-            type="number"
-            min="1"
-            value={peopleCount}
-            onChange={(e) => setPeopleCount(Number(e.target.value))}
-          />
-        </Label>
-      </CountNumContainer2>
-      <BudgetForm>
-        {budgetItems.map((item) => (
-          <BudgetContaniner key={item.id}>
-            <TextField>
-              <M500Grey>{item.name}</M500Grey>
-              <BodyM500>₩{item.cost.toLocaleString()}</BodyM500>
-            </TextField>
-          </BudgetContaniner>
-        ))}
-        <Button type="button" onClick={handleModifyClick}>
-          항목 추가
-        </Button>
-      </BudgetForm>
-    </MainContainer>
-  );
-};
+const Button = styled.button`
+  width: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 1rem;
+  background: var(--primary-G500, #aeaeae);
+  color: #fafbfb;
+  font-family: Pretendard;
+  font-size: 1.25rem;
+  font-weight: 600;
+  line-height: 1.25rem;
 
+  &:hover {
+    background-color: #52c1bf;
+  }
+`;
 export default ArtRegiBugetPage;
