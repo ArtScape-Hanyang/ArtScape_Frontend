@@ -1,7 +1,6 @@
 import styled from "styled-components";
 import GlobalStyle from "../styles/GlobalStyle";
 import Header from "../components/header";
-import photo from "../asset/photo.svg";
 import profile from "../asset/profile.png";
 import detail from "../asset/detail.svg";
 import seemore from "../asset/seemore.svg";

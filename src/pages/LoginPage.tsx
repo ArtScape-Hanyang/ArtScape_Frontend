@@ -5,8 +5,10 @@ import kakao from "../asset/kakao.svg";
 import google from "../asset/google.svg";
 import naver from "../asset/naver.svg";
 import GlobalStyle from "../styles/GlobalStyle";
+//import KakaoLogin from "react-kakao-login";
 
-// 로그인 페이지 컴포넌트
+//const kakaoClientId = import.meta.env.VITE_KAKAO_JAVASCRIPT_KEY;
+
 const LoginPage = () => {
   return (
     <MainContainer>
@@ -26,12 +28,14 @@ const LoginPage = () => {
       </LineWrapper>
       <SocialLoginBtn>
         <img src={kakao} alt="소셜카카오" />
+
         <img src={google} alt="소셜구글" />
         <img src={naver} alt="소셜네이버" />
       </SocialLoginBtn>
     </MainContainer>
   );
 };
+
 // 메인 컨테이너 스타일
 const MainContainer = styled.div`
   width: 25.125rem;
