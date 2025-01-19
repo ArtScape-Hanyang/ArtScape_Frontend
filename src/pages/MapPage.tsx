@@ -20,6 +20,7 @@ const loadKakaoSDK = () => {
 
   if (document.getElementById("kakao-map-script")) {
     console.log("Kakao Maps SDK가 이미 로드되었습니다.");
+
     return;
   }
 
@@ -117,6 +118,7 @@ const MapPage = () => {
         },
         { merge: true }
       );
+
       navigate("/multi_pln"); // ✅ PlanMain으로 이동
     } catch (error) {
       console.error("Error saving location:", error);
