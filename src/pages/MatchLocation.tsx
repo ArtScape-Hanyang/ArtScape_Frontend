@@ -45,7 +45,7 @@ function MatchLocation() {
   const closeFBottomSheet = () => setIsFSheetOpen(false);
   const closeSBottomSheet = () => setIsSSheetOpen(false);
 
-  const regionData = {
+  const regionData: Record<string, string[]> = {
     서울특별시: [
       "강남구",
       "강동구",

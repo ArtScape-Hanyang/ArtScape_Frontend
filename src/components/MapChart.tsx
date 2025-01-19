@@ -1,4 +1,3 @@
-import React from "react";
 import styled from "styled-components";
 import navigation from "../asset/navigation.svg";
 
@@ -104,7 +103,16 @@ const TrView = styled.div`
 const PrView = styled(TrView)`
   background: var(--Secondary-R400, #ff4040);
 `;
-const MapChart = ({ selectedPlace }) => {
+interface Place {
+  id: string;
+  name: string;
+  lat: number; // ✅ 추가
+  lng: number; // ✅ 추가
+  position: { lat: number; lng: number };
+  content: string;
+  address: string;
+}
+const MapChart = ({ selectedPlace }: { selectedPlace: Place }) => {
   return (
     <MainContainer>
       <TitleContainer>

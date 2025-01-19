@@ -1,13 +1,14 @@
 {
-  "files": [],
-  "references": [
-    { "path": "./tsconfig.app.json" },
-    { "path": "./tsconfig.node.json" }
-  ],
   "compilerOptions": {
-    "types": ["kakao.maps.d.ts", "firebase"], // Firebase 타입 추가
+    "jsx": "react-jsx", // ✅ Vite + React JSX 지원
+    "module": "ESNext", // ✅ Vite와 호환되도록 ESNext 사용
+    "target": "ESNext",
+    "moduleResolution": "node",
     "resolveJsonModule": true,
     "esModuleInterop": true,
-    "moduleResolution": "node"
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "types": ["kakao.maps.d.ts", "node", "vite/client"] // ✅ 기존 설정 유지 + Vite 환경 변수 추가
   }
 }

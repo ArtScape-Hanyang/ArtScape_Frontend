@@ -8,16 +8,46 @@ import Header from "../components/header";
 import photo from "../asset/photo.svg";
 import profile from "../asset/profile.png";
 import exhibitionphoto from "../asset/exhibitionphoto.svg";
-import seemore from "../asset/seemore.svg";
+
 import whitemap from "../asset/whitemap.svg";
 import detail from "../asset/detail.svg";
+// 🔹 데이터 타입 정의
+interface BudgetItem {
+  name: string;
+  cost: number;
+}
+
+interface LocationData {
+  name: string;
+  address: string;
+}
+
+interface Note {
+  mention?: string;
+  text: string;
+}
+
+interface PlanData {
+  title: string;
+  description: string;
+  startDate: string | null;
+  endDate: string | null;
+  location: LocationData | null;
+  artworkImages: string[];
+  budget: {
+    budgetItems: BudgetItem[];
+    totalCost: number;
+    perPersonCost: number;
+  };
+  notes: Note[];
+  posterImage: string | null;
+}
 
 const PlanDetail = () => {
   const { id } = useParams();
-  const [data, setData] = useState(null);
+  const [data, setData] = useState<PlanData | null>(null);
   const [loading, setLoading] = useState(true);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [posterImage, setPosterImage] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -36,7 +66,11 @@ const PlanDetail = () => {
           console.log("Fetched Data from plandetail:", fetchedData);
 
           setData({
-            ...fetchedData,
+            title: fetchedData.title || "제목 없음",
+            description: fetchedData.description || "설명 없음",
+            startDate: fetchedData.startDate || null,
+            endDate: fetchedData.endDate || null,
+            location: fetchedData.location || null,
             artworkImages: fetchedData.artworkImages || [],
             budget: fetchedData.budget || {
               budgetItems: [],
@@ -44,10 +78,13 @@ const PlanDetail = () => {
               perPersonCost: 0,
             },
             notes: fetchedData.notes || [],
+            posterImage: fetchedData.posterImage || null, // ✅ 포스터 이미지 가져오기
           });
 
-          // ✅ 포스터 이미지도 `plandetail/{id}`에서 가져오기
-          setPosterImage(fetchedData.posterImage || null);
+          console.log(
+            "🔥 Firestore에서 가져온 포스터 이미지:",
+            fetchedData.posterImage
+          );
         } else {
           console.log("No such document in plandetail!");
           setData({
@@ -81,8 +118,8 @@ const PlanDetail = () => {
       <Header />
       <TitleContainer>
         <Profile>
-          {posterImage ? (
-            <img src={posterImage} alt="Uploaded Poster" />
+          {data.posterImage ? (
+            <img src={data.posterImage} alt="Uploaded Poster" />
           ) : (
             <img src={photo} alt="Default Profile" />
           )}
@@ -114,13 +151,7 @@ const PlanDetail = () => {
       <ItemsContainer>
         <H1>전시 출품작</H1>
         <Items>
-          <ItemName>
-            <SeemoreCon>
-              <img src={seemore} />
-              <img src={seemore} />
-              <img src={seemore} />
-            </SeemoreCon>
-          </ItemName>
+          <ItemName></ItemName>
           <ItemImgContainer>
             {data.artworkImages?.length > 0 ? (
               <>
@@ -155,13 +186,7 @@ const PlanDetail = () => {
           </ItemImgContainer>
         </Items>
         <Items>
-          <ItemName>
-            <SeemoreCon>
-              <img src={seemore} />
-              <img src={seemore} />
-              <img src={seemore} />
-            </SeemoreCon>
-          </ItemName>
+          <ItemName></ItemName>
           <ItemImgContainer>
             {data.artworkImages?.length > 0 ? (
               <>
@@ -200,15 +225,14 @@ const PlanDetail = () => {
       <PosterContainer>
         <PosterDetail>
           <H1>전시 포스터</H1>
-          <SeemoreCon>
-            <img src={seemore} />
-            <img src={seemore} />
-            <img src={seemore} />
-          </SeemoreCon>
         </PosterDetail>
         <Poster>
-          {posterImage ? (
-            <img src={posterImage} alt="Uploaded Poster" />
+          {data.posterImage ? (
+            <img
+              src={data.posterImage}
+              alt="Uploaded Poster"
+              onError={(e) => console.error("❌ 이미지 로드 오류", e)}
+            />
           ) : (
             <img src={exhibitionphoto} alt="Default Poster" />
           )}
@@ -440,20 +464,6 @@ const ItemName = styled.div`
   justify-content: space-between;
 `;
 
-const ItemArtist = styled.div`
-  width: 7rem;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-`;
-
-const SeemoreCon = styled.div`
-  display: flex;
-  gap: 0.12rem;
-  cursor: pointer;
-`;
-
 const ItemImgContainer = styled.div`
   background-color: #d9d9d9;
   width: 100%;
@@ -638,25 +648,6 @@ const PlusContent = styled.div`
   }
 `;
 
-const PlusButton = styled.div`
-  width: 100%;
-  height: 1.69rem;
-  border-radius: 0 0 0.5rem 0.5rem;
-  border: 1px solid #e7e7ee;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-
-  p {
-    color: #656572;
-    font-size: 0.75rem;
-    font-weight: 500;
-    line-height: 0.75rem; /* 100% */
-    letter-spacing: -0.01875rem;
-  }
-`;
-
 const TotalBuget = styled.div`
   width: 100%-0.75rem;
   height: 1.75rem;
@@ -755,50 +746,6 @@ const NoteContainer = styled.div`
   }
 `;
 
-const BothContainer = styled.div`
-  width: 100%-1.5rem;
-  height: auto;
-  padding: 0 1.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  margin-top: 2rem;
-`;
-
-const BothComponent = styled.div`
-  width: 100%;
-  height: auto;
-  display: flex;
-  gap: 0.5rem;
-`;
-
-const Both = styled.div<{ width: string }>`
-  width: ${(props) => props.width};
-  height: 1.5rem;
-  padding: 0.5rem;
-  background-color: #e7e7ee;
-  color: #656572;
-  border-radius: 0.375rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  p {
-    font-size: 0.9rem;
-    font-weight: 600;
-    line-height: 0.75rem; /* 100% */
-    letter-spacing: -0.01875rem;
-  }
-`;
-
-const BtnContainer = styled.div`
-  width: calc(100% - 1.5rem);
-  height: auto;
-  padding: 0 1.5rem;
-  display: flex;
-  gap: 1.25rem;
-  margin-top: 5rem;
-`;
 const CarouselButton = styled.button`
   position: absolute;
   top: 50%;

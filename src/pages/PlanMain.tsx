@@ -31,12 +31,27 @@ function PlanMain() {
   const [startDate, setStartDate] = useState<string | null>(null);
   const [endDate, setEndDate] = useState<string | null>(null);
   const [notes, setNotes] = useState<{ mention: string; text: string }[]>([]);
-  const [budget, setBudget] = useState({
+  // 🔹 'name'과 'address' 속성이 있는 타입을 정의
+  type LocationType = {
+    name: string;
+    address: string;
+  };
+
+  // 🔹 'name'과 'cost' 속성이 있는 예산 항목 타입을 정의
+  type BudgetItem = {
+    name: string;
+    cost: number;
+  };
+  const [budget, setBudget] = useState<{
+    budgetItems: BudgetItem[];
+    totalCost: number;
+    perPersonCost: number;
+  }>({
     budgetItems: [],
     totalCost: 0,
     perPersonCost: 0,
   });
-  const [location, setLocation] = useState(null);
+  const [location, setLocation] = useState<LocationType | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   useEffect(() => {
@@ -147,9 +162,8 @@ function PlanMain() {
         const docSnap = await getDoc(doc(db, "plans", "mainPlan"));
 
         if (docSnap.exists()) {
-          const locationData = docSnap.data().location || null;
-          console.log("Fetched Location:", locationData); // ✅ 불러온 데이터 확인
-          setLocation(locationData);
+          const locationData = docSnap.data().location as LocationType | null;
+          setLocation(locationData || null); // ✅ 기본값 추가
         } else {
           console.log("No location data found");
         }
@@ -160,6 +174,7 @@ function PlanMain() {
 
     fetchLocation();
   }, []);
+
   const handleNextImage = () => {
     if (artworkImages.length > 0) {
       setCurrentImageIndex(
