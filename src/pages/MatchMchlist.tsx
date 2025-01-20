@@ -16,7 +16,10 @@ function MatchMchlist() {
     regions: string[];
     artworkTypes: string[];
     workStyles: string[];
+    firstLocation?: string;
+    secondLocation?: string;
   }
+
   const [data, setData] = useState<MatchData>({
     selectedPrice: "입력되지 않음",
     selectedSize: "입력되지 않음",
@@ -28,7 +31,7 @@ function MatchMchlist() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const userId = getCurrentUserId(); // UID 가져오기
+        const userId = getCurrentUserId(); // ✅ 현재 사용자 UID 가져오기
         const fetchedData = await getDataFromFirestore<MatchData>(
           "matchData",
           userId
@@ -36,20 +39,22 @@ function MatchMchlist() {
 
         console.log("가져온 데이터:", fetchedData);
 
-        const regions = fetchedData?.regions?.length
-          ? fetchedData.regions
-          : [
-              fetchedData?.firstLocation || "",
-              fetchedData?.secondLocation || "",
-            ].filter((region) => region !== ""); // 빈 값 제거
-
         setData({
           selectedPrice: fetchedData?.selectedPrice || "입력되지 않음",
           selectedSize: fetchedData?.selectedSize || "입력되지 않음",
           groupSize: fetchedData?.groupSize || "입력되지 않음",
-          regions,
-          artworkTypes: fetchedData?.artworkTypes || [],
-          workStyles: fetchedData?.workStyles || [],
+          regions: fetchedData?.regions?.length
+            ? fetchedData.regions
+            : [
+                fetchedData?.firstLocation || "입력되지 않음",
+                fetchedData?.secondLocation || "입력되지 않음",
+              ].filter((region) => region !== "입력되지 않음"),
+          artworkTypes: fetchedData?.artworkTypes?.length
+            ? fetchedData.artworkTypes
+            : ["입력되지 않음"], // ✅ 기본값 추가
+          workStyles: fetchedData?.workStyles?.length
+            ? fetchedData.workStyles
+            : ["입력되지 않음"], // ✅ 기본값 추가
         });
       } catch (error) {
         console.error("데이터 로드 실패:", error);
@@ -112,23 +117,32 @@ function MatchMchlist() {
           <ResultComponent>
             <Label>작품 형태</Label>
             <Btns>
-              {data.artworkTypes.map((type, index) => (
-                <ResultBtn key={index} width="auto">
-                  {type}
-                </ResultBtn>
-              ))}
+              {data.artworkTypes.length > 0 ? (
+                data.artworkTypes.map((type, index) => (
+                  <ResultBtn key={index} width="auto">
+                    {type}
+                  </ResultBtn>
+                ))
+              ) : (
+                <ResultBtn width="auto">입력되지 않음</ResultBtn> // ✅ 기본값 추가
+              )}
             </Btns>
           </ResultComponent>
           <ResultComponent>
             <Label>작가님의 작업 스타일</Label>
             <Btns>
-              {data.workStyles.map((style, index) => (
-                <ResultBtn key={index} width="auto">
-                  {style}
-                </ResultBtn>
-              ))}
+              {data.workStyles.length > 0 ? (
+                data.workStyles.map((style, index) => (
+                  <ResultBtn key={index} width="auto">
+                    {style}
+                  </ResultBtn>
+                ))
+              ) : (
+                <ResultBtn width="auto">입력되지 않음</ResultBtn> // ✅ 기본값 추가
+              )}
             </Btns>
           </ResultComponent>
+
           <BtnContainer>
             <Button
               label="수정하기"

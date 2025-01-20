@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import GlobalStyle from "../styles/GlobalStyle";
-import { Map, MapMarker, CustomOverlayMap } from "react-kakao-maps-sdk";
+import { Map, MapMarker } from "react-kakao-maps-sdk";
 import Header from "../components/header";
 import MapChart from "../components/MapChart";
 import markerImage from "../asset/ic-location.png";
@@ -20,6 +20,7 @@ const loadKakaoSDK = () => {
 
   if (document.getElementById("kakao-map-script")) {
     console.log("Kakao Maps SDK가 이미 로드되었습니다.");
+
     return;
   }
 
@@ -37,11 +38,30 @@ const loadKakaoSDK = () => {
 
 const MapPage = () => {
   const [input, setInput] = useState("");
-  const [center, setCenter] = useState({ lat: 33.5563, lng: 126.79581 });
-  const [markers, setMarkers] = useState([]); // 모든 마커 저장
-  const [selectedPlace, setSelectedPlace] = useState(null); // 선택된 장소 저장
-  const [map, setMap] = useState(null); // 지도 객체 저장
-  const overlayRef = useRef(null); // 오버레이를 참조하기 위한 ref
+  const [markers, setMarkers] = useState<
+    {
+      id: string;
+      position: { lat: number; lng: number };
+      content: string;
+      address: string;
+    }[]
+  >([]);
+
+  interface Place {
+    id: string;
+    name: string;
+    lat: number; // ✅ 추가
+    lng: number; // ✅ 추가
+    position: { lat: number; lng: number };
+    content: string;
+    address: string;
+  }
+
+  const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
+
+  const [map, setMap] = useState<kakao.maps.Map | null>(null);
+  const overlayRef = useRef<HTMLDivElement | null>(null);
+
   const navigate = useNavigate();
 
   const handleSearch = () => {
@@ -53,7 +73,10 @@ const MapPage = () => {
       if (status === kakao.maps.services.Status.OK) {
         const bounds = new kakao.maps.LatLngBounds();
         const newMarkers = data.map((place) => {
-          bounds.extend(new kakao.maps.LatLng(place.y, place.x));
+          bounds.extend(
+            new kakao.maps.LatLng(parseFloat(place.y), parseFloat(place.x))
+          );
+
           return {
             id: place.id,
             position: { lat: parseFloat(place.y), lng: parseFloat(place.x) },
@@ -70,9 +93,12 @@ const MapPage = () => {
     });
   };
 
-  const handleClickOutside = (event) => {
-    if (overlayRef.current && !overlayRef.current.contains(event.target)) {
-      setSelectedPlace(null); // 선택된 장소 초기화
+  const handleClickOutside = (event: MouseEvent) => {
+    if (
+      overlayRef.current instanceof HTMLDivElement &&
+      !overlayRef.current.contains(event.target as Node)
+    ) {
+      setSelectedPlace(null);
     }
   };
   const handleSavePlace = async () => {
@@ -93,7 +119,6 @@ const MapPage = () => {
         { merge: true }
       );
 
-      alert("장소가 저장되었습니다!");
       navigate("/multi_pln"); // ✅ PlanMain으로 이동
     } catch (error) {
       console.error("Error saving location:", error);
@@ -102,10 +127,9 @@ const MapPage = () => {
   };
 
   useEffect(() => {
-    // 마운트 시 이벤트 리스너 등록
+    loadKakaoSDK(); // ✅ Kakao SDK 로드
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      // 언마운트 시 이벤트 리스너 제거
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
@@ -138,7 +162,8 @@ const MapPage = () => {
           <MapMarker
             key={marker.id}
             position={marker.position}
-            onClick={() => setSelectedPlace(marker)} // 마커 클릭 시 선택된 장소 업데이트
+            onClick={() => setSelectedPlace(marker as Place)}
+            // 마커 클릭 시 선택된 장소 업데이트
             image={{
               src: markerImage,
               size: {

@@ -1,0 +1,24 @@
+import axiosInstance from "./axios";
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+export const updateArtworkImageUrl = async (id, imageUrl) => {
+    try {
+        const response = await axiosInstance.put(`${BASE_URL}/mlt_plan/exhib_list/${id}/artwork_image_url`, {
+            artwork_image_url: imageUrl,
+        });
+        return response.data;
+    }
+    catch (error) {
+        console.error("Error updating artwork image URL:", error);
+        throw error;
+    }
+};
+export const fetchArtworkImageUrls = async (id) => {
+    try {
+        const response = await axiosInstance.get(`/mlt_plan/exhib_list/${id}/artwork_image_url`);
+        return response.data;
+    }
+    catch (error) {
+        console.error("Error fetching artwork image URLs:", error);
+        throw error;
+    }
+};

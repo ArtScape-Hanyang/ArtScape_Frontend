@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { auth } from "../routes/firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
+import { FirebaseError } from "firebase/app";
 
 const LoginForm = () => {
   const [formData, setFormData] = useState({
@@ -56,25 +57,25 @@ const LoginForm = () => {
       alert("환영합니다!");
       navigate("/matching");
     } catch (err: unknown) {
-      // Firebase 오류 처리
-      const firebaseErrorMessages: { [key: string]: string } = {
-        "auth/invalid-email": "유효하지 않은 이메일 형식입니다.",
-        "auth/user-disabled": "이 계정은 비활성화되었습니다.",
-        "auth/user-not-found": "등록되지 않은 사용자입니다.",
-        "auth/wrong-password": "비밀번호가 올바르지 않습니다.",
-        "auth/too-many-requests":
-          "로그인 시도가 너무 많아 계정이 잠겼습니다. 잠시 후 다시 시도해주세요.",
-      };
+      if (err instanceof FirebaseError) {
+        // Firebase 오류 처리
+        const firebaseErrorMessages: { [key: string]: string } = {
+          "auth/invalid-email": "유효하지 않은 이메일 형식입니다.",
+          "auth/user-disabled": "이 계정은 비활성화되었습니다.",
+          "auth/user-not-found": "등록되지 않은 사용자입니다.",
+          "auth/wrong-password": "비밀번호가 올바르지 않습니다.",
+          "auth/too-many-requests":
+            "로그인 시도가 너무 많아 계정이 잠겼습니다. 잠시 후 다시 시도해주세요.",
+        };
+        const errorMessage =
+          firebaseErrorMessages[err.code] ||
+          "로그인 중 문제가 발생했습니다. 다시 시도해주세요.";
 
-      const errorMessage =
-        firebaseErrorMessages[err.code] ||
-        "로그인 중 문제가 발생했습니다. 다시 시도해주세요.";
-
-      console.error("Firebase Error:", err.message);
-      setErrorMessage(errorMessage);
+        console.error("Firebase Error:", err.message);
+        setErrorMessage(errorMessage);
+      }
     }
   };
-
   return (
     <LoginContainer>
       <StyledForm onSubmit={handleSubmit}>

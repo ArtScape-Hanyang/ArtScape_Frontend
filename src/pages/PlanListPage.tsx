@@ -8,7 +8,7 @@ import Navbar from "../components/NavBar";
 import Header from "../components/header";
 
 function PlanListPage() {
-  const [plans, setPlans] = useState([]);
+  const [plans, setPlans] = useState<{ id: string; title: string }[]>([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -28,8 +28,9 @@ function PlanListPage() {
     fetchPlans();
   }, []);
 
-  const handlePlanClick = (id) => {
-    navigate(`/plandetail/${id}`); // PlanDetail 페이지로 이동
+  const handlePlanClick = (id: string) => {
+    // ✅ id의 타입을 명확하게 지정
+    navigate(`/plandetail/${id}`);
   };
 
   return (
